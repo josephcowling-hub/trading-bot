@@ -3,91 +3,106 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Predict and Execute - LIVE</title>
+<title>Predict & Execute - LIVE</title>
 <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body { 
         font-family: 'Courier New', monospace; 
         background: #080c10; 
         color: #d0dae6; 
-        min-height: 100vh;
+        padding: 20px; 
+        text-align: center;
     }
-    .header { 
+    .card { 
         background: #0d1117; 
-        padding: 15px 20px; 
-        display: flex; 
-        justify-content: space-between; 
-        border-bottom: 1px solid #1c2530;
-    }
-    .logo { font-size: 18px; font-weight: 800; color: #00ff88; }
-    .key-bar { 
-        padding: 12px 20px; 
-        background: #0a0e14; 
-        border-bottom: 1px solid #1c2530; 
-        display: flex; 
-        align-items: center; 
-        gap: 12px; 
-        flex-wrap: wrap;
+        border: 1px solid #1c2530; 
+        border-radius: 12px; 
+        padding: 20px; 
+        margin: 15px 0;
     }
     input { 
-        flex: 1; 
-        min-width: 280px; 
-        padding: 10px; 
+        width: 100%; 
+        padding: 15px; 
+        margin: 10px 0; 
         background: #131923; 
         border: 1px solid #1c2530; 
         color: white; 
-        font-family: inherit;
+        font-size: 16px;
     }
-    .btn-green { 
+    button { 
         background: #00ff88; 
         color: black; 
         border: none; 
-        padding: 10px 18px; 
-        font-weight: 800; 
-        cursor: pointer;
+        padding: 15px 25px; 
+        font-size: 16px; 
+        font-weight: bold; 
+        margin: 10px;
     }
-    .card { background: #0d1117; border: 1px solid #1c2530; border-radius: 10px; padding: 16px; margin: 20px; }
+    .success { color: #00ff88; }
+    .error { color: #ff4d4d; }
 </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="logo">PREDICT AND EXECUTE <span style="font-size:13px;">v2.1 LIVE</span></div>
+<h2>PREDICT AND EXECUTE</h2>
+<p style="color:#ffd700">v2.1 LIVE PRICE TEST</p>
+
+<div class="card">
+    <h3>Finnhub API Key</h3>
+    <input type="text" id="apiKey" placeholder="Paste your Finnhub key" />
+    <br><br>
+    <button onclick="testKey()">TEST KEY & LOAD PRICE</button>
+    <div id="status" style="margin-top:15px; font-size:15px; min-height:60px;"></div>
 </div>
 
-<!-- FINNHUB KEY INPUT - THIS SHOULD ALWAYS SHOW -->
-<div class="key-bar">
-    <strong>Finnhub API Key:</strong>
-    <input type="text" id="apiKey" placeholder="Paste your Finnhub key here" />
-    <button onclick="saveAndTestKey()" class="btn-green">Save & Test Key</button>
-    <span id="keyStatus" style="margin-left:10px;"></span>
-</div>
-
-<div class="card" style="margin:20px;">
-    <h2>Status</h2>
-    <p id="statusText">Waiting for API key...</p>
-    <button onclick="testPrice()" style="margin-top:10px;" class="btn-green">Test NVDA Price</button>
+<div class="card">
+    <h3>Result</h3>
+    <div id="result" style="font-size:18px; font-weight:bold;"></div>
 </div>
 
 <script>
-// =============== LIVE PRICE SETUP ===============
 let apiKey = localStorage.getItem("finnhubKey") || "";
 
-function saveAndTestKey() {
-    apiKey = document.getElementById("apiKey").value.trim();
-    localStorage.setItem("finnhubKey", apiKey);
-    
-    document.getElementById("keyStatus").textContent = "Testing...";
-    
-    testPrice();
+document.getElementById("apiKey").value = apiKey;
+
+async function testKey() {
+    const key = document.getElementById("apiKey").value.trim();
+    const statusEl = document.getElementById("status");
+    const resultEl = document.getElementById("result");
+
+    if (!key) {
+        statusEl.innerHTML = '<span class="error">❌ Please paste a key first</span>';
+        return;
+    }
+
+    localStorage.setItem("finnhubKey", key);
+    statusEl.innerHTML = 'Testing key...';
+
+    try {
+        const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=NVDA&token=${key}`);
+        
+        if (!res.ok) {
+            statusEl.innerHTML = `<span class="error">❌ HTTP Error ${res.status}</span>`;
+            return;
+        }
+
+        const data = await res.json();
+        
+        if (data.c && data.c > 0) {
+            statusEl.innerHTML = `<span class="success">✅ KEY WORKS!</span>`;
+            resultEl.innerHTML = `NVDA Live Price: <span style="color:#ffd700">$${data.c.toFixed(2)}</span>`;
+        } else {
+            statusEl.innerHTML = `<span class="error">❌ Key valid but no data returned</span>`;
+        }
+    } catch(e) {
+        statusEl.innerHTML = `<span class="error">❌ Connection Error<br>${e.message}</span>`;
+    }
 }
 
-async function getLivePrice(ticker) {
-    if (!apiKey) return null;
-    try {
-        const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${apiKey}`);
-        const data = await res.json();
-        if (data.c) {
-            return {
-                price: data.c.toFixed(2),
-                change: data.pc ? ((data.c - data
+// Auto test if key already saved
+if (apiKey) {
+    setTimeout(() => testKey(), 800);
+}
+</script>
+
+</body>
+</html>
