@@ -976,9 +976,13 @@ async function runScan() {
   renderScanTable();
 
   appendLog('Fetching live prices from API...', 'log-muted');
-  await fetchAllLivePrices();
+  try {
+    await fetchAllLivePrices();
+  } catch (e) {
+    appendLog('API offline - using simulated prices', 'log-red');
+  }
   var liveCount = Object.keys(livePrices).length;
-  appendLog('Live prices loaded: ' + liveCount + ' tickers', 'log-green');
+  appendLog('Live prices loaded: ' + liveCount + ' tickers', liveCount > 0 ? 'log-green' : 'log-red');
 
   document.getElementById('scanBtn').textContent = 'SCANNING...';
 
@@ -1087,7 +1091,9 @@ async function analyseSignal() {
   if (!ticker) return;
   var btn = document.querySelector('#tab-signal .btn-green');
   if (btn) { btn.disabled = true; btn.textContent = 'FETCHING LIVE...'; }
-  await fetchLivePrice(ticker);
+  try {
+    await fetchLivePrice(ticker);
+  } catch (e) {}
   if (btn) { btn.disabled = false; btn.textContent = 'ANALYSE'; }
   var wl = state.watchlist.find(function(w){return w.ticker===ticker;});
   if (!wl) {
