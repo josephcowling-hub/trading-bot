@@ -3,46 +3,91 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Predict and Execute Trading Bot - LIVE</title>
+<title>Predict and Execute - LIVE</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --green: #00ff88;
-  --gold: #ffd700;
-  --red: #ff4d4d;
-  --blue: #00bfff;
-  --dark: #080c10;
-  --card: #0d1117;
-  --border: #1c2530;
-  --text: #d0dae6;
-  --muted: #5a7080;
-}
-body { font-family: 'Courier New', monospace; background: var(--dark); color: var(--text); min-height: 100vh; }
-
-.header { background: var(--card); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-.logo { font-size: 16px; font-weight: 800; color: var(--green); letter-spacing: 2px; }
-.header-stats { display: flex; gap: 8px; flex-wrap: wrap; }
-.stat-pill { background: #131923; border: 1px solid var(--border); border-radius: 5px; padding: 5px 12px; text-align: center; }
-.stat-pill .val { font-size: 14px; font-weight: 800; display: block; }
-.stat-pill .lbl { font-size: 9px; color: var(--muted); letter-spacing: 1px; }
-
-.tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--card); overflow-x: auto; }
-.tab { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 12px 16px; cursor: pointer; font-size: 11px; white-space: nowrap; }
-.tab.active { color: var(--green); border-bottom-color: var(--green); }
-
-.main { padding: 20px; }
-.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
-.signal-banner { border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-th, td { padding: 8px 12px; border-bottom: 1px solid #131923; }
-tr:hover { background: rgba(0,255,136,0.03); }
-.btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 800; }
-.btn-green { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #000; }
-.badge { padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+        font-family: 'Courier New', monospace; 
+        background: #080c10; 
+        color: #d0dae6; 
+        min-height: 100vh;
+    }
+    .header { 
+        background: #0d1117; 
+        padding: 15px 20px; 
+        display: flex; 
+        justify-content: space-between; 
+        border-bottom: 1px solid #1c2530;
+    }
+    .logo { font-size: 18px; font-weight: 800; color: #00ff88; }
+    .key-bar { 
+        padding: 12px 20px; 
+        background: #0a0e14; 
+        border-bottom: 1px solid #1c2530; 
+        display: flex; 
+        align-items: center; 
+        gap: 12px; 
+        flex-wrap: wrap;
+    }
+    input { 
+        flex: 1; 
+        min-width: 280px; 
+        padding: 10px; 
+        background: #131923; 
+        border: 1px solid #1c2530; 
+        color: white; 
+        font-family: inherit;
+    }
+    .btn-green { 
+        background: #00ff88; 
+        color: black; 
+        border: none; 
+        padding: 10px 18px; 
+        font-weight: 800; 
+        cursor: pointer;
+    }
+    .card { background: #0d1117; border: 1px solid #1c2530; border-radius: 10px; padding: 16px; margin: 20px; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="logo">PREDICT AND EXECUTE <span style="font-size:11px;">KELLY CRITERION v2.1 LIVE</span></div
+    <div class="logo">PREDICT AND EXECUTE <span style="font-size:13px;">v2.1 LIVE</span></div>
+</div>
+
+<!-- FINNHUB KEY INPUT - THIS SHOULD ALWAYS SHOW -->
+<div class="key-bar">
+    <strong>Finnhub API Key:</strong>
+    <input type="text" id="apiKey" placeholder="Paste your Finnhub key here" />
+    <button onclick="saveAndTestKey()" class="btn-green">Save & Test Key</button>
+    <span id="keyStatus" style="margin-left:10px;"></span>
+</div>
+
+<div class="card" style="margin:20px;">
+    <h2>Status</h2>
+    <p id="statusText">Waiting for API key...</p>
+    <button onclick="testPrice()" style="margin-top:10px;" class="btn-green">Test NVDA Price</button>
+</div>
+
+<script>
+// =============== LIVE PRICE SETUP ===============
+let apiKey = localStorage.getItem("finnhubKey") || "";
+
+function saveAndTestKey() {
+    apiKey = document.getElementById("apiKey").value.trim();
+    localStorage.setItem("finnhubKey", apiKey);
+    
+    document.getElementById("keyStatus").textContent = "Testing...";
+    
+    testPrice();
+}
+
+async function getLivePrice(ticker) {
+    if (!apiKey) return null;
+    try {
+        const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${apiKey}`);
+        const data = await res.json();
+        if (data.c) {
+            return {
+                price: data.c.toFixed(2),
+                change: data.pc ? ((data.c - data
