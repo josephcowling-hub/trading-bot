@@ -1,14 +1,13 @@
 // Vercel Serverless Function - Live Price Proxy
 // File: api/price.js
-// Uses CommonJS format - works without package.json module config
+// Uses Node.js https module - most compatible with all Vercel runtimes
 
-module.exports = async function handler(req, res) {
-// CORS headers
+var https = require(‘https’);
+
+module.exports = function handler(req, res) {
 res.setHeader(‘Access-Control-Allow-Origin’, ‘*’);
 res.setHeader(‘Access-Control-Allow-Methods’, ‘GET, OPTIONS’);
-res.setHeader(‘Access-Control-Allow-Headers’, ‘Content-Type’);
 
-// Handle preflight
 if (req.method === ‘OPTIONS’) {
 return res.status(200).end();
 }
@@ -20,55 +19,48 @@ return res.status(400).json({ error: ‘Missing ticker’ });
 
 var apiKey = process.env.API_KEY;
 if (!apiKey) {
-return res.status(500).json({ error: ‘API_KEY not set in Vercel environment variables’ });
+return res.status(500).json({ error: ‘API_KEY not configured’ });
 }
 
-try {
-var response = await fetch(
-‘https://api.financialdatasets.ai/prices/snapshot?ticker=’ + ticker,
-{
+var options = {
+hostname: ‘api.financialdatasets.ai’,
+path: ‘/prices/snapshot?ticker=’ + encodeURIComponent(ticker),
+method: ‘GET’,
 headers: {
 ‘X-API-KEY’: apiKey,
 ‘Accept’: ‘application/json’
 }
-}
-);
+};
 
-```
-var text = await response.text();
-
-if (!response.ok) {
-  return res.status(response.status).json({
-    error: 'API returned ' + response.status,
-    body: text,
-    ticker: ticker
-  });
-}
-
-var data = JSON.parse(text);
-
-// Handle different response shapes from financialdatasets.ai
+var request = https.request(options, function(response) {
+var body = ‘’;
+response.on(‘data’, function(chunk) { body += chunk; });
+response.on(‘end’, function() {
+try {
+var data = JSON.parse(body);
 var price = null;
 if (data.snapshot) {
-  price = data.snapshot.price || data.snapshot.close || data.snapshot.last_price;
-} else if (data.price) {
-  price = typeof data.price === 'number' ? data.price : data.price.price;
+price = data.snapshot.price || data.snapshot.close || data.snapshot.last_price;
+} else if (typeof data.price === ‘number’) {
+price = data.price;
 } else if (data.close) {
-  price = data.close;
+price = data.close;
 }
-
-return res.status(200).json({
-  ticker: ticker,
-  price: price,
-  raw: data,
-  timestamp: new Date().toISOString()
+res.status(200).json({
+ticker: ticker,
+price: price,
+status: response.statusCode,
+timestamp: new Date().toISOString()
 });
-```
-
-} catch (err) {
-return res.status(500).json({
-error: err.message,
-ticker: ticker
-});
+} catch (e) {
+res.status(500).json({ error: ’Parse error: ’ + e.message, body: body });
 }
+});
+});
+
+request.on(‘error’, function(e) {
+res.status(500).json({ error: e.message });
+});
+
+request.end();
 };
