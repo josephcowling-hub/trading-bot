@@ -351,47 +351,24 @@ function genModelProb(pMkt) {
 // 
 function fetchLivePrice(ticker) {
   return new Promise(function(resolve) {
-    // Yahoo Finance direct API - no proxy needed for most browsers
-    var url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + ticker + '?interval=1d&range=1d';
-    fetch(url, {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' },
-      mode: 'cors'
-    })
-    .then(function(r) { return r.ok ? r.json() : null; })
-    .then(function(data) {
-      try {
-        var result = data.chart.result[0];
-        var price = result.meta.regularMarketPrice || result.meta.previousClose;
-        if (price && price > 0) {
-          state.livePrices[ticker] = { price: price, time: Date.now() };
-          resolve(price);
+    var FINNHUB_KEY = 'd805071r01qj3ct939i0d805071r01qj3ct939ig';
+    // Convert UK tickers to Finnhub format
+    var symbol = ticker;
+    if (ticker.endsWith('.L')) symbol = ticker.replace('.L', '') + '.L';
+    var url = 'https://finnhub.io/api/v1/quote?symbol=' + symbol + '&token=' + FINNHUB_KEY;
+    fetch(url)
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (data && data.c && data.c > 0) {
+          state.livePrices[ticker] = { price: data.c, high: data.h, low: data.l, open: data.o, time: Date.now() };
+          resolve(data.c);
         } else {
           resolve(null);
         }
-      } catch(e) {
-        resolve(null);
-      }
-    })
-    .catch(function() {
-      // Try backup Yahoo endpoint
-      var url2 = 'https://query2.finance.yahoo.com/v8/finance/chart/' + ticker + '?interval=1d&range=1d';
-      fetch(url2, { mode: 'cors' })
-      .then(function(r) { return r.ok ? r.json() : null; })
-      .then(function(data) {
-        try {
-          var price = data.chart.result[0].meta.regularMarketPrice;
-          if (price && price > 0) {
-            state.livePrices[ticker] = { price: price, time: Date.now() };
-            resolve(price);
-          } else { resolve(null); }
-        } catch(e) { resolve(null); }
       })
       .catch(function() { resolve(null); });
-    });
   });
 }
-
 function fetchAllLivePrices() {
   var promises = WATCHLIST.map(function(w) { return fetchLivePrice(w.t); });
   return Promise.all(promises);
@@ -576,11 +553,20 @@ function renderSignal(ticker) {
   var w = WATCHLIST.find(function(x){return x.t === ticker;});
   if (!w) w = {t:ticker, n:ticker, s:'Custom', c:'--', pM:0.50, bp:50};
   var sd = getSignalData(w);
+  var liveData = state.livePrices[ticker];
+  var liveData = state.livePrices[ticker];
   var html = '';
-  if (sd.isLive) {
-    html += '<div style="background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.25);border-radius:6px;padding:8px 14px;margin-bottom:12px;font-size:11px;color:#00ff88;text-align:center;">LIVE DATA - $'+sd.lastPrice.toFixed(2)+'</div>';
+  if (liveData && liveData.price > 0) {
+    html += '<div style="background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.25);border-radius:6px;padding:10px 14px;margin-bottom:12px;">';
+    html += '<div style="font-size:11px;color:#00ff88;text-align:center;font-weight:700;margin-bottom:6px;">LIVE PRICE - FINNHUB</div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">';
+    html += '<div><div style="font-size:9px;color:#5a7080;">CURRENT</div><div style="font-size:16px;font-weight:800;color:#fff;">$'+liveData.price.toFixed(2)+'</div></div>';
+    html += '<div><div style="font-size:9px;color:#5a7080;">OPEN</div><div style="font-size:13px;color:#8b949e;">$'+(liveData.open||0).toFixed(2)+'</div></div>';
+    html += '<div><div style="font-size:9px;color:#5a7080;">HIGH</div><div style="font-size:13px;color:#00ff88;">$'+(liveData.high||0).toFixed(2)+'</div></div>';
+    html += '<div><div style="font-size:9px;color:#5a7080;">LOW</div><div style="font-size:13px;color:#ff4d4d;">$'+(liveData.low||0).toFixed(2)+'</div></div>';
+    html += '</div></div>';
   } else {
-    html += '<div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:6px;padding:8px 14px;margin-bottom:12px;font-size:11px;color:#ffd700;text-align:center;">SIMULATED PRICE - approximate $'+sd.lastPrice.toFixed(2)+'</div>';
+    html += '<div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:6px;padding:8px 14px;margin-bottom:12px;font-size:11px;color:#ffd700;text-align:center;">APPROX $'+sd.lastPrice.toFixed(2)+' - Live prices Mon-Fri 2:30pm UK</div>';
   }
   html += '<div class="signal-banner" style="background:'+sd.color+'10;border:1px solid '+sd.color+'40">';
   html += '<div class="signal-cell"><div class="lbl">SIGNAL</div><div class="val" style="color:'+sd.color+'">'+sd.signal+'</div></div>';
@@ -758,6 +744,923 @@ document.addEventListener('DOMContentLoaded', function() {
   renderWatchlist();
   updateLiveBanner();
   // Don't auto-fetch on load - wait for user to tap Analyse or Run Scan
+});
+</script>
+
+</body>
+</html>
++liveData.price.toFixed(2)+'</div></div>';
+    html += '<div><div style="font-size:9px;color:#5a7080;">OPEN</div><div style="font-size:13px;color:#8b949e;">
+  html += '<div class="signal-banner" style="background:'+sd.color+'10;border:1px solid '+sd.color+'40">';
+  html += '<div class="signal-cell"><div class="lbl">SIGNAL</div><div class="val" style="color:'+sd.color+'">'+sd.signal+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">EDGE</div><div class="val" style="color:'+sd.color+'">'+(sd.edge>0?'+':'')+(sd.edge*100).toFixed(1)+'%</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">KELLY SIZE</div><div class="val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">CATALYST</div><div class="val" style="color:#ffd700;font-size:14px">'+w.c+'</div></div>';
+  html += '</div>';
+  html += '<div class="card"><div class="card-header">TECHNICAL INDICATORS</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;">';
+  html += metricBox('RSI(14)', sd.rsi.toFixed(1), sd.rsi < 40 ? 'Oversold' : sd.rsi > 70 ? 'Overbought' : 'Neutral', sd.rsi < 40 ? '#00ff88' : sd.rsi > 70 ? '#ff4d4d' : '#ffd700');
+  html += metricBox('TREND', sd.trendBull ? 'BULLISH' : 'BEARISH', 'vs EMA 50', sd.trendBull ? '#00ff88' : '#ff4d4d');
+  html += metricBox('VOLUME', sd.volSpike ? 'SPIKE' : 'Normal', sd.volSpike ? '1.5x avg' : 'Below avg', sd.volSpike ? '#ffd700' : '#5a7080');
+  html += metricBox('SIGNALS', sd.sigCount + '/3', sd.sigCount >= 2 ? 'Confirmed' : 'Need 2+', sd.sigCount >= 2 ? '#00ff88' : '#5a7080');
+  html += '</div></div>';
+  html += '<div class="trade-setup">';
+  html += '<div style="font-size:11px;color:#00ff88;letter-spacing:1px;font-weight:700;margin-bottom:12px;">TRADE SETUP</div>';
+  html += '<div class="trade-cells">';
+  html += '<div class="trade-cell"><span class="tc-lbl">ENTRY</span><span class="tc-val" style="color:#fff">$'+sd.lastPrice.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">STOP LOSS</span><span class="tc-val" style="color:#ff4d4d">$'+sd.stopLoss.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">TARGET</span><span class="tc-val" style="color:#00ff88">$'+sd.takeProfit.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">SIZE</span><span class="tc-val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</span></div>';
+  html += '</div>';
+  html += '<div class="t212-box">Trading 212 ISA: Search '+ticker+' -> Buy -> £'+sd.posSize.toFixed(0)+' -> Stop $'+sd.stopLoss.toFixed(2)+' -> Target $'+sd.takeProfit.toFixed(2)+'</div>';
+  if (sd.signal === 'STRONG BUY' || sd.signal === 'BUY') {
+    html += '<div style="margin-top:12px;text-align:center"><button class="btn btn-green" onclick="executeTrade(\''+ticker+'\','+sd.posSize.toFixed(0)+','+sd.stopLoss.toFixed(2)+','+sd.takeProfit.toFixed(2)+','+sd.edge.toFixed(4)+')">EXECUTE TRADE</button></div>';
+  }
+  html += '</div>';
+  document.getElementById('signalContent').innerHTML = html;
+}
+
+function metricBox(lbl, val, sub, color) {
+return ‘<div class="metric"><div class="lbl">’+lbl+’</div><div class="val" style="color:'+color+'">’+val+’</div><div class="sub">’+sub+’</div></div>’;
+}
+
+//
+// TRADES
+//
+function executeTrade(ticker, size, sl, tp, edge) {
+state.trades.unshift({
+ticker: ticker, size: size, sl: sl, tp: tp, edge: edge,
+time: new Date().toLocaleTimeString()
+});
+document.getElementById(‘hTrades’).textContent = state.trades.length;
+renderTrades();
+showTab(‘trades’);
+}
+
+function renderTrades() {
+var el = document.getElementById(‘tradesContent’);
+if (!state.trades.length) {
+el.innerHTML = ‘<div style="color:#5a7080;font-size:13px;text-align:center;padding:40px 0;">No trades yet</div>’;
+return;
+}
+var html = ‘<div style="overflow-x:auto"><table><thead><tr><th>Time</th><th>Ticker</th><th>Size</th><th>Stop</th><th>Target</th><th>Edge</th></tr></thead><tbody>’;
+state.trades.forEach(function(t) {
+html += ‘<tr><td style="color:#5a7080">’+t.time+’</td>’+
+‘<td style="font-weight:800;color:#fff">’+t.ticker+’</td>’+
+‘<td style="color:#ffd700">£’+t.size+’</td>’+
+‘<td style="color:#ff4d4d">$’+t.sl+’</td>’+
+‘<td style="color:#00ff88">$’+t.tp+’</td>’+
+‘<td style="color:#00ff88">+’+(t.edge*100).toFixed(1)+’%</td></tr>’;
+});
+html += ‘</tbody></table></div>’;
+el.innerHTML = html;
+}
+
+//
+// KELLY
+//
+function updateBankroll(val) {
+state.bankroll = parseInt(val);
+document.getElementById(‘bankrollLabel’).textContent = ‘Bankroll: £’ + parseInt(val).toLocaleString();
+document.getElementById(‘hBankroll’).textContent = ‘£’ + parseInt(val).toLocaleString();
+}
+function updateAlpha(val) {
+state.alpha = parseFloat(val);
+document.getElementById(‘alphaLabel’).textContent = ’Fractional Kelly Alpha: ’ + parseFloat(val).toFixed(2);
+}
+function updateMaxExp(val) {
+state.maxExp = parseInt(val) / 100;
+document.getElementById(‘maxExpLabel’).textContent = ’Max Exposure: ’ + val + ‘%’;
+}
+
+function calcKellyLive() {
+var p = parseFloat(document.getElementById(‘kellyP’).value) / 100;
+var b = parseFloat(document.getElementById(‘kellyB’).value);
+var el = document.getElementById(‘kellyResult’);
+if (!p || !b || p <= 0 || p >= 1 || b <= 0) {
+el.innerHTML = ‘<div style="color:#5a7080;font-size:12px;text-align:center;">Enter valid values</div>’;
+return;
+}
+var kelly = (p * b - (1-p)) / b;
+var fracKelly = state.alpha * kelly;
+var posSize = Math.min(Math.max(0, fracKelly) * state.bankroll, state.maxExp * state.bankroll);
+var color = kelly > 0 ? ‘#00ff88’ : ‘#ff4d4d’;
+el.innerHTML = ‘<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">’+
+metricBox(‘FULL KELLY’, (kelly*100).toFixed(1)+’%’, ‘of bankroll’, color)+
+metricBox(‘FRAC KELLY’, (fracKelly*100).toFixed(1)+’%’, ’alpha ’+state.alpha)+
+metricBox(‘POSITION’, ‘£’+posSize.toFixed(0), ‘to invest’, ‘#ffd700’)+
+‘</div>’;
+}
+
+//
+// WATCHLIST
+//
+function renderWatchlist() {
+var el = document.getElementById(‘watchlistContent’);
+var html = ‘’;
+WATCHLIST.forEach(function(w, i) {
+html += ‘<div style="background:#0d1117;border:1px solid #1c2530;border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;">’;
+html += ‘<div style="flex:1"><div style="font-size:16px;font-weight:800;color:#fff">’+w.t+’ <span style="font-size:12px;color:#5a7080;font-weight:400">’+w.n+’</span></div>’;
+html += ‘<div style="font-size:10px;color:#5a7080;margin-top:3px">’+w.s+’ - Catalyst: <span style="color:#ffd700">’+w.c+’</span></div></div>’;
+html += ‘<button onclick="removeTicker('+i+')" style="background:none;border:none;color:#5a7080;cursor:pointer;font-size:16px;">x</button></div>’;
+});
+el.innerHTML = html;
+}
+
+function removeTicker(i) {
+WATCHLIST.splice(i, 1);
+renderWatchlist();
+}
+
+function addTicker() {
+var t = document.getElementById(‘newTickerInput’).value.toUpperCase().trim();
+if (!t) return;
+if (WATCHLIST.find(function(w){return w.t === t;})) {
+alert(t + ’ already in watchlist’);
+return;
+}
+WATCHLIST.push({t:t, n:t, s:‘Custom’, c:’–’, pM:0.50, bp:50});
+document.getElementById(‘newTickerInput’).value = ‘’;
+renderWatchlist();
+}
+
+//
+// TABS
+//
+function showTab(id) {
+var contents = document.querySelectorAll(’.tab-content’);
+for (var i = 0; i < contents.length; i++) contents[i].classList.remove(‘active’);
+var tabs = document.querySelectorAll(’.tab’);
+for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove(‘active’);
+document.getElementById(‘tab-’ + id).classList.add(‘active’);
+for (var k = 0; k < tabs.length; k++) {
+if (tabs[k].dataset.tab === id) tabs[k].classList.add(‘active’);
+}
+}
+
+//
+// EVENT LISTENERS
+//
+document.addEventListener(‘DOMContentLoaded’, function() {
+// Tabs
+var tabs = document.querySelectorAll(’.tab’);
+for (var i = 0; i < tabs.length; i++) {
+tabs[i].addEventListener(‘click’, function() { showTab(this.dataset.tab); });
+}
+// Buttons
+document.getElementById(‘scanBtn’).addEventListener(‘click’, runScan);
+document.getElementById(‘analyseBtn’).addEventListener(‘click’, analyseSignal);
+document.getElementById(‘addTickerBtn’).addEventListener(‘click’, addTicker);
+// Filters
+document.getElementById(‘searchInput’).addEventListener(‘input’, renderScanTable);
+document.getElementById(‘sectorFilter’).addEventListener(‘change’, renderScanTable);
+document.getElementById(‘signalFilter’).addEventListener(‘change’, renderScanTable);
+// Sliders
+document.getElementById(‘bankrollSlider’).addEventListener(‘input’, function() { updateBankroll(this.value); });
+document.getElementById(‘alphaSlider’).addEventListener(‘input’, function() { updateAlpha(this.value); });
+document.getElementById(‘maxExpSlider’).addEventListener(‘input’, function() { updateMaxExp(this.value); });
+document.getElementById(‘kellyP’).addEventListener(‘input’, calcKellyLive);
+document.getElementById(‘kellyB’).addEventListener(‘input’, calcKellyLive);
+
+// Initial render
+renderScanTable();
+renderWatchlist();
+updateLiveBanner();
+// Don’t auto-fetch on load - wait for user to tap Analyse or Run Scan
+});
+</script>
+
+</body>
+</html>
++(liveData.open||0).toFixed(2)+'</div></div>';
+    html += '<div><div style="font-size:9px;color:#5a7080;">HIGH</div><div style="font-size:13px;color:#00ff88;">
+  html += '<div class="signal-banner" style="background:'+sd.color+'10;border:1px solid '+sd.color+'40">';
+  html += '<div class="signal-cell"><div class="lbl">SIGNAL</div><div class="val" style="color:'+sd.color+'">'+sd.signal+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">EDGE</div><div class="val" style="color:'+sd.color+'">'+(sd.edge>0?'+':'')+(sd.edge*100).toFixed(1)+'%</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">KELLY SIZE</div><div class="val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">CATALYST</div><div class="val" style="color:#ffd700;font-size:14px">'+w.c+'</div></div>';
+  html += '</div>';
+  html += '<div class="card"><div class="card-header">TECHNICAL INDICATORS</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;">';
+  html += metricBox('RSI(14)', sd.rsi.toFixed(1), sd.rsi < 40 ? 'Oversold' : sd.rsi > 70 ? 'Overbought' : 'Neutral', sd.rsi < 40 ? '#00ff88' : sd.rsi > 70 ? '#ff4d4d' : '#ffd700');
+  html += metricBox('TREND', sd.trendBull ? 'BULLISH' : 'BEARISH', 'vs EMA 50', sd.trendBull ? '#00ff88' : '#ff4d4d');
+  html += metricBox('VOLUME', sd.volSpike ? 'SPIKE' : 'Normal', sd.volSpike ? '1.5x avg' : 'Below avg', sd.volSpike ? '#ffd700' : '#5a7080');
+  html += metricBox('SIGNALS', sd.sigCount + '/3', sd.sigCount >= 2 ? 'Confirmed' : 'Need 2+', sd.sigCount >= 2 ? '#00ff88' : '#5a7080');
+  html += '</div></div>';
+  html += '<div class="trade-setup">';
+  html += '<div style="font-size:11px;color:#00ff88;letter-spacing:1px;font-weight:700;margin-bottom:12px;">TRADE SETUP</div>';
+  html += '<div class="trade-cells">';
+  html += '<div class="trade-cell"><span class="tc-lbl">ENTRY</span><span class="tc-val" style="color:#fff">$'+sd.lastPrice.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">STOP LOSS</span><span class="tc-val" style="color:#ff4d4d">$'+sd.stopLoss.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">TARGET</span><span class="tc-val" style="color:#00ff88">$'+sd.takeProfit.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">SIZE</span><span class="tc-val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</span></div>';
+  html += '</div>';
+  html += '<div class="t212-box">Trading 212 ISA: Search '+ticker+' -> Buy -> £'+sd.posSize.toFixed(0)+' -> Stop $'+sd.stopLoss.toFixed(2)+' -> Target $'+sd.takeProfit.toFixed(2)+'</div>';
+  if (sd.signal === 'STRONG BUY' || sd.signal === 'BUY') {
+    html += '<div style="margin-top:12px;text-align:center"><button class="btn btn-green" onclick="executeTrade(\''+ticker+'\','+sd.posSize.toFixed(0)+','+sd.stopLoss.toFixed(2)+','+sd.takeProfit.toFixed(2)+','+sd.edge.toFixed(4)+')">EXECUTE TRADE</button></div>';
+  }
+  html += '</div>';
+  document.getElementById('signalContent').innerHTML = html;
+}
+
+function metricBox(lbl, val, sub, color) {
+return ‘<div class="metric"><div class="lbl">’+lbl+’</div><div class="val" style="color:'+color+'">’+val+’</div><div class="sub">’+sub+’</div></div>’;
+}
+
+//
+// TRADES
+//
+function executeTrade(ticker, size, sl, tp, edge) {
+state.trades.unshift({
+ticker: ticker, size: size, sl: sl, tp: tp, edge: edge,
+time: new Date().toLocaleTimeString()
+});
+document.getElementById(‘hTrades’).textContent = state.trades.length;
+renderTrades();
+showTab(‘trades’);
+}
+
+function renderTrades() {
+var el = document.getElementById(‘tradesContent’);
+if (!state.trades.length) {
+el.innerHTML = ‘<div style="color:#5a7080;font-size:13px;text-align:center;padding:40px 0;">No trades yet</div>’;
+return;
+}
+var html = ‘<div style="overflow-x:auto"><table><thead><tr><th>Time</th><th>Ticker</th><th>Size</th><th>Stop</th><th>Target</th><th>Edge</th></tr></thead><tbody>’;
+state.trades.forEach(function(t) {
+html += ‘<tr><td style="color:#5a7080">’+t.time+’</td>’+
+‘<td style="font-weight:800;color:#fff">’+t.ticker+’</td>’+
+‘<td style="color:#ffd700">£’+t.size+’</td>’+
+‘<td style="color:#ff4d4d">$’+t.sl+’</td>’+
+‘<td style="color:#00ff88">$’+t.tp+’</td>’+
+‘<td style="color:#00ff88">+’+(t.edge*100).toFixed(1)+’%</td></tr>’;
+});
+html += ‘</tbody></table></div>’;
+el.innerHTML = html;
+}
+
+//
+// KELLY
+//
+function updateBankroll(val) {
+state.bankroll = parseInt(val);
+document.getElementById(‘bankrollLabel’).textContent = ‘Bankroll: £’ + parseInt(val).toLocaleString();
+document.getElementById(‘hBankroll’).textContent = ‘£’ + parseInt(val).toLocaleString();
+}
+function updateAlpha(val) {
+state.alpha = parseFloat(val);
+document.getElementById(‘alphaLabel’).textContent = ’Fractional Kelly Alpha: ’ + parseFloat(val).toFixed(2);
+}
+function updateMaxExp(val) {
+state.maxExp = parseInt(val) / 100;
+document.getElementById(‘maxExpLabel’).textContent = ’Max Exposure: ’ + val + ‘%’;
+}
+
+function calcKellyLive() {
+var p = parseFloat(document.getElementById(‘kellyP’).value) / 100;
+var b = parseFloat(document.getElementById(‘kellyB’).value);
+var el = document.getElementById(‘kellyResult’);
+if (!p || !b || p <= 0 || p >= 1 || b <= 0) {
+el.innerHTML = ‘<div style="color:#5a7080;font-size:12px;text-align:center;">Enter valid values</div>’;
+return;
+}
+var kelly = (p * b - (1-p)) / b;
+var fracKelly = state.alpha * kelly;
+var posSize = Math.min(Math.max(0, fracKelly) * state.bankroll, state.maxExp * state.bankroll);
+var color = kelly > 0 ? ‘#00ff88’ : ‘#ff4d4d’;
+el.innerHTML = ‘<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">’+
+metricBox(‘FULL KELLY’, (kelly*100).toFixed(1)+’%’, ‘of bankroll’, color)+
+metricBox(‘FRAC KELLY’, (fracKelly*100).toFixed(1)+’%’, ’alpha ’+state.alpha)+
+metricBox(‘POSITION’, ‘£’+posSize.toFixed(0), ‘to invest’, ‘#ffd700’)+
+‘</div>’;
+}
+
+//
+// WATCHLIST
+//
+function renderWatchlist() {
+var el = document.getElementById(‘watchlistContent’);
+var html = ‘’;
+WATCHLIST.forEach(function(w, i) {
+html += ‘<div style="background:#0d1117;border:1px solid #1c2530;border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;">’;
+html += ‘<div style="flex:1"><div style="font-size:16px;font-weight:800;color:#fff">’+w.t+’ <span style="font-size:12px;color:#5a7080;font-weight:400">’+w.n+’</span></div>’;
+html += ‘<div style="font-size:10px;color:#5a7080;margin-top:3px">’+w.s+’ - Catalyst: <span style="color:#ffd700">’+w.c+’</span></div></div>’;
+html += ‘<button onclick="removeTicker('+i+')" style="background:none;border:none;color:#5a7080;cursor:pointer;font-size:16px;">x</button></div>’;
+});
+el.innerHTML = html;
+}
+
+function removeTicker(i) {
+WATCHLIST.splice(i, 1);
+renderWatchlist();
+}
+
+function addTicker() {
+var t = document.getElementById(‘newTickerInput’).value.toUpperCase().trim();
+if (!t) return;
+if (WATCHLIST.find(function(w){return w.t === t;})) {
+alert(t + ’ already in watchlist’);
+return;
+}
+WATCHLIST.push({t:t, n:t, s:‘Custom’, c:’–’, pM:0.50, bp:50});
+document.getElementById(‘newTickerInput’).value = ‘’;
+renderWatchlist();
+}
+
+//
+// TABS
+//
+function showTab(id) {
+var contents = document.querySelectorAll(’.tab-content’);
+for (var i = 0; i < contents.length; i++) contents[i].classList.remove(‘active’);
+var tabs = document.querySelectorAll(’.tab’);
+for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove(‘active’);
+document.getElementById(‘tab-’ + id).classList.add(‘active’);
+for (var k = 0; k < tabs.length; k++) {
+if (tabs[k].dataset.tab === id) tabs[k].classList.add(‘active’);
+}
+}
+
+//
+// EVENT LISTENERS
+//
+document.addEventListener(‘DOMContentLoaded’, function() {
+// Tabs
+var tabs = document.querySelectorAll(’.tab’);
+for (var i = 0; i < tabs.length; i++) {
+tabs[i].addEventListener(‘click’, function() { showTab(this.dataset.tab); });
+}
+// Buttons
+document.getElementById(‘scanBtn’).addEventListener(‘click’, runScan);
+document.getElementById(‘analyseBtn’).addEventListener(‘click’, analyseSignal);
+document.getElementById(‘addTickerBtn’).addEventListener(‘click’, addTicker);
+// Filters
+document.getElementById(‘searchInput’).addEventListener(‘input’, renderScanTable);
+document.getElementById(‘sectorFilter’).addEventListener(‘change’, renderScanTable);
+document.getElementById(‘signalFilter’).addEventListener(‘change’, renderScanTable);
+// Sliders
+document.getElementById(‘bankrollSlider’).addEventListener(‘input’, function() { updateBankroll(this.value); });
+document.getElementById(‘alphaSlider’).addEventListener(‘input’, function() { updateAlpha(this.value); });
+document.getElementById(‘maxExpSlider’).addEventListener(‘input’, function() { updateMaxExp(this.value); });
+document.getElementById(‘kellyP’).addEventListener(‘input’, calcKellyLive);
+document.getElementById(‘kellyB’).addEventListener(‘input’, calcKellyLive);
+
+// Initial render
+renderScanTable();
+renderWatchlist();
+updateLiveBanner();
+// Don’t auto-fetch on load - wait for user to tap Analyse or Run Scan
+});
+</script>
+
+</body>
+</html>
++(liveData.high||0).toFixed(2)+'</div></div>';
+    html += '<div><div style="font-size:9px;color:#5a7080;">LOW</div><div style="font-size:13px;color:#ff4d4d;">
+  html += '<div class="signal-banner" style="background:'+sd.color+'10;border:1px solid '+sd.color+'40">';
+  html += '<div class="signal-cell"><div class="lbl">SIGNAL</div><div class="val" style="color:'+sd.color+'">'+sd.signal+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">EDGE</div><div class="val" style="color:'+sd.color+'">'+(sd.edge>0?'+':'')+(sd.edge*100).toFixed(1)+'%</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">KELLY SIZE</div><div class="val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">CATALYST</div><div class="val" style="color:#ffd700;font-size:14px">'+w.c+'</div></div>';
+  html += '</div>';
+  html += '<div class="card"><div class="card-header">TECHNICAL INDICATORS</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;">';
+  html += metricBox('RSI(14)', sd.rsi.toFixed(1), sd.rsi < 40 ? 'Oversold' : sd.rsi > 70 ? 'Overbought' : 'Neutral', sd.rsi < 40 ? '#00ff88' : sd.rsi > 70 ? '#ff4d4d' : '#ffd700');
+  html += metricBox('TREND', sd.trendBull ? 'BULLISH' : 'BEARISH', 'vs EMA 50', sd.trendBull ? '#00ff88' : '#ff4d4d');
+  html += metricBox('VOLUME', sd.volSpike ? 'SPIKE' : 'Normal', sd.volSpike ? '1.5x avg' : 'Below avg', sd.volSpike ? '#ffd700' : '#5a7080');
+  html += metricBox('SIGNALS', sd.sigCount + '/3', sd.sigCount >= 2 ? 'Confirmed' : 'Need 2+', sd.sigCount >= 2 ? '#00ff88' : '#5a7080');
+  html += '</div></div>';
+  html += '<div class="trade-setup">';
+  html += '<div style="font-size:11px;color:#00ff88;letter-spacing:1px;font-weight:700;margin-bottom:12px;">TRADE SETUP</div>';
+  html += '<div class="trade-cells">';
+  html += '<div class="trade-cell"><span class="tc-lbl">ENTRY</span><span class="tc-val" style="color:#fff">$'+sd.lastPrice.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">STOP LOSS</span><span class="tc-val" style="color:#ff4d4d">$'+sd.stopLoss.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">TARGET</span><span class="tc-val" style="color:#00ff88">$'+sd.takeProfit.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">SIZE</span><span class="tc-val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</span></div>';
+  html += '</div>';
+  html += '<div class="t212-box">Trading 212 ISA: Search '+ticker+' -> Buy -> £'+sd.posSize.toFixed(0)+' -> Stop $'+sd.stopLoss.toFixed(2)+' -> Target $'+sd.takeProfit.toFixed(2)+'</div>';
+  if (sd.signal === 'STRONG BUY' || sd.signal === 'BUY') {
+    html += '<div style="margin-top:12px;text-align:center"><button class="btn btn-green" onclick="executeTrade(\''+ticker+'\','+sd.posSize.toFixed(0)+','+sd.stopLoss.toFixed(2)+','+sd.takeProfit.toFixed(2)+','+sd.edge.toFixed(4)+')">EXECUTE TRADE</button></div>';
+  }
+  html += '</div>';
+  document.getElementById('signalContent').innerHTML = html;
+}
+
+function metricBox(lbl, val, sub, color) {
+return ‘<div class="metric"><div class="lbl">’+lbl+’</div><div class="val" style="color:'+color+'">’+val+’</div><div class="sub">’+sub+’</div></div>’;
+}
+
+//
+// TRADES
+//
+function executeTrade(ticker, size, sl, tp, edge) {
+state.trades.unshift({
+ticker: ticker, size: size, sl: sl, tp: tp, edge: edge,
+time: new Date().toLocaleTimeString()
+});
+document.getElementById(‘hTrades’).textContent = state.trades.length;
+renderTrades();
+showTab(‘trades’);
+}
+
+function renderTrades() {
+var el = document.getElementById(‘tradesContent’);
+if (!state.trades.length) {
+el.innerHTML = ‘<div style="color:#5a7080;font-size:13px;text-align:center;padding:40px 0;">No trades yet</div>’;
+return;
+}
+var html = ‘<div style="overflow-x:auto"><table><thead><tr><th>Time</th><th>Ticker</th><th>Size</th><th>Stop</th><th>Target</th><th>Edge</th></tr></thead><tbody>’;
+state.trades.forEach(function(t) {
+html += ‘<tr><td style="color:#5a7080">’+t.time+’</td>’+
+‘<td style="font-weight:800;color:#fff">’+t.ticker+’</td>’+
+‘<td style="color:#ffd700">£’+t.size+’</td>’+
+‘<td style="color:#ff4d4d">$’+t.sl+’</td>’+
+‘<td style="color:#00ff88">$’+t.tp+’</td>’+
+‘<td style="color:#00ff88">+’+(t.edge*100).toFixed(1)+’%</td></tr>’;
+});
+html += ‘</tbody></table></div>’;
+el.innerHTML = html;
+}
+
+//
+// KELLY
+//
+function updateBankroll(val) {
+state.bankroll = parseInt(val);
+document.getElementById(‘bankrollLabel’).textContent = ‘Bankroll: £’ + parseInt(val).toLocaleString();
+document.getElementById(‘hBankroll’).textContent = ‘£’ + parseInt(val).toLocaleString();
+}
+function updateAlpha(val) {
+state.alpha = parseFloat(val);
+document.getElementById(‘alphaLabel’).textContent = ’Fractional Kelly Alpha: ’ + parseFloat(val).toFixed(2);
+}
+function updateMaxExp(val) {
+state.maxExp = parseInt(val) / 100;
+document.getElementById(‘maxExpLabel’).textContent = ’Max Exposure: ’ + val + ‘%’;
+}
+
+function calcKellyLive() {
+var p = parseFloat(document.getElementById(‘kellyP’).value) / 100;
+var b = parseFloat(document.getElementById(‘kellyB’).value);
+var el = document.getElementById(‘kellyResult’);
+if (!p || !b || p <= 0 || p >= 1 || b <= 0) {
+el.innerHTML = ‘<div style="color:#5a7080;font-size:12px;text-align:center;">Enter valid values</div>’;
+return;
+}
+var kelly = (p * b - (1-p)) / b;
+var fracKelly = state.alpha * kelly;
+var posSize = Math.min(Math.max(0, fracKelly) * state.bankroll, state.maxExp * state.bankroll);
+var color = kelly > 0 ? ‘#00ff88’ : ‘#ff4d4d’;
+el.innerHTML = ‘<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">’+
+metricBox(‘FULL KELLY’, (kelly*100).toFixed(1)+’%’, ‘of bankroll’, color)+
+metricBox(‘FRAC KELLY’, (fracKelly*100).toFixed(1)+’%’, ’alpha ’+state.alpha)+
+metricBox(‘POSITION’, ‘£’+posSize.toFixed(0), ‘to invest’, ‘#ffd700’)+
+‘</div>’;
+}
+
+//
+// WATCHLIST
+//
+function renderWatchlist() {
+var el = document.getElementById(‘watchlistContent’);
+var html = ‘’;
+WATCHLIST.forEach(function(w, i) {
+html += ‘<div style="background:#0d1117;border:1px solid #1c2530;border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;">’;
+html += ‘<div style="flex:1"><div style="font-size:16px;font-weight:800;color:#fff">’+w.t+’ <span style="font-size:12px;color:#5a7080;font-weight:400">’+w.n+’</span></div>’;
+html += ‘<div style="font-size:10px;color:#5a7080;margin-top:3px">’+w.s+’ - Catalyst: <span style="color:#ffd700">’+w.c+’</span></div></div>’;
+html += ‘<button onclick="removeTicker('+i+')" style="background:none;border:none;color:#5a7080;cursor:pointer;font-size:16px;">x</button></div>’;
+});
+el.innerHTML = html;
+}
+
+function removeTicker(i) {
+WATCHLIST.splice(i, 1);
+renderWatchlist();
+}
+
+function addTicker() {
+var t = document.getElementById(‘newTickerInput’).value.toUpperCase().trim();
+if (!t) return;
+if (WATCHLIST.find(function(w){return w.t === t;})) {
+alert(t + ’ already in watchlist’);
+return;
+}
+WATCHLIST.push({t:t, n:t, s:‘Custom’, c:’–’, pM:0.50, bp:50});
+document.getElementById(‘newTickerInput’).value = ‘’;
+renderWatchlist();
+}
+
+//
+// TABS
+//
+function showTab(id) {
+var contents = document.querySelectorAll(’.tab-content’);
+for (var i = 0; i < contents.length; i++) contents[i].classList.remove(‘active’);
+var tabs = document.querySelectorAll(’.tab’);
+for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove(‘active’);
+document.getElementById(‘tab-’ + id).classList.add(‘active’);
+for (var k = 0; k < tabs.length; k++) {
+if (tabs[k].dataset.tab === id) tabs[k].classList.add(‘active’);
+}
+}
+
+//
+// EVENT LISTENERS
+//
+document.addEventListener(‘DOMContentLoaded’, function() {
+// Tabs
+var tabs = document.querySelectorAll(’.tab’);
+for (var i = 0; i < tabs.length; i++) {
+tabs[i].addEventListener(‘click’, function() { showTab(this.dataset.tab); });
+}
+// Buttons
+document.getElementById(‘scanBtn’).addEventListener(‘click’, runScan);
+document.getElementById(‘analyseBtn’).addEventListener(‘click’, analyseSignal);
+document.getElementById(‘addTickerBtn’).addEventListener(‘click’, addTicker);
+// Filters
+document.getElementById(‘searchInput’).addEventListener(‘input’, renderScanTable);
+document.getElementById(‘sectorFilter’).addEventListener(‘change’, renderScanTable);
+document.getElementById(‘signalFilter’).addEventListener(‘change’, renderScanTable);
+// Sliders
+document.getElementById(‘bankrollSlider’).addEventListener(‘input’, function() { updateBankroll(this.value); });
+document.getElementById(‘alphaSlider’).addEventListener(‘input’, function() { updateAlpha(this.value); });
+document.getElementById(‘maxExpSlider’).addEventListener(‘input’, function() { updateMaxExp(this.value); });
+document.getElementById(‘kellyP’).addEventListener(‘input’, calcKellyLive);
+document.getElementById(‘kellyB’).addEventListener(‘input’, calcKellyLive);
+
+// Initial render
+renderScanTable();
+renderWatchlist();
+updateLiveBanner();
+// Don’t auto-fetch on load - wait for user to tap Analyse or Run Scan
+});
+</script>
+
+</body>
+</html>
++(liveData.low||0).toFixed(2)+'</div></div>';
+    html += '</div></div>';
+  } else {
+    html += '<div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:6px;padding:8px 14px;margin-bottom:12px;font-size:11px;color:#ffd700;text-align:center;">APPROXIMATE PRICE 
+  html += '<div class="signal-banner" style="background:'+sd.color+'10;border:1px solid '+sd.color+'40">';
+  html += '<div class="signal-cell"><div class="lbl">SIGNAL</div><div class="val" style="color:'+sd.color+'">'+sd.signal+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">EDGE</div><div class="val" style="color:'+sd.color+'">'+(sd.edge>0?'+':'')+(sd.edge*100).toFixed(1)+'%</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">KELLY SIZE</div><div class="val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">CATALYST</div><div class="val" style="color:#ffd700;font-size:14px">'+w.c+'</div></div>';
+  html += '</div>';
+  html += '<div class="card"><div class="card-header">TECHNICAL INDICATORS</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;">';
+  html += metricBox('RSI(14)', sd.rsi.toFixed(1), sd.rsi < 40 ? 'Oversold' : sd.rsi > 70 ? 'Overbought' : 'Neutral', sd.rsi < 40 ? '#00ff88' : sd.rsi > 70 ? '#ff4d4d' : '#ffd700');
+  html += metricBox('TREND', sd.trendBull ? 'BULLISH' : 'BEARISH', 'vs EMA 50', sd.trendBull ? '#00ff88' : '#ff4d4d');
+  html += metricBox('VOLUME', sd.volSpike ? 'SPIKE' : 'Normal', sd.volSpike ? '1.5x avg' : 'Below avg', sd.volSpike ? '#ffd700' : '#5a7080');
+  html += metricBox('SIGNALS', sd.sigCount + '/3', sd.sigCount >= 2 ? 'Confirmed' : 'Need 2+', sd.sigCount >= 2 ? '#00ff88' : '#5a7080');
+  html += '</div></div>';
+  html += '<div class="trade-setup">';
+  html += '<div style="font-size:11px;color:#00ff88;letter-spacing:1px;font-weight:700;margin-bottom:12px;">TRADE SETUP</div>';
+  html += '<div class="trade-cells">';
+  html += '<div class="trade-cell"><span class="tc-lbl">ENTRY</span><span class="tc-val" style="color:#fff">$'+sd.lastPrice.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">STOP LOSS</span><span class="tc-val" style="color:#ff4d4d">$'+sd.stopLoss.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">TARGET</span><span class="tc-val" style="color:#00ff88">$'+sd.takeProfit.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">SIZE</span><span class="tc-val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</span></div>';
+  html += '</div>';
+  html += '<div class="t212-box">Trading 212 ISA: Search '+ticker+' -> Buy -> £'+sd.posSize.toFixed(0)+' -> Stop $'+sd.stopLoss.toFixed(2)+' -> Target $'+sd.takeProfit.toFixed(2)+'</div>';
+  if (sd.signal === 'STRONG BUY' || sd.signal === 'BUY') {
+    html += '<div style="margin-top:12px;text-align:center"><button class="btn btn-green" onclick="executeTrade(\''+ticker+'\','+sd.posSize.toFixed(0)+','+sd.stopLoss.toFixed(2)+','+sd.takeProfit.toFixed(2)+','+sd.edge.toFixed(4)+')">EXECUTE TRADE</button></div>';
+  }
+  html += '</div>';
+  document.getElementById('signalContent').innerHTML = html;
+}
+
+function metricBox(lbl, val, sub, color) {
+return ‘<div class="metric"><div class="lbl">’+lbl+’</div><div class="val" style="color:'+color+'">’+val+’</div><div class="sub">’+sub+’</div></div>’;
+}
+
+//
+// TRADES
+//
+function executeTrade(ticker, size, sl, tp, edge) {
+state.trades.unshift({
+ticker: ticker, size: size, sl: sl, tp: tp, edge: edge,
+time: new Date().toLocaleTimeString()
+});
+document.getElementById(‘hTrades’).textContent = state.trades.length;
+renderTrades();
+showTab(‘trades’);
+}
+
+function renderTrades() {
+var el = document.getElementById(‘tradesContent’);
+if (!state.trades.length) {
+el.innerHTML = ‘<div style="color:#5a7080;font-size:13px;text-align:center;padding:40px 0;">No trades yet</div>’;
+return;
+}
+var html = ‘<div style="overflow-x:auto"><table><thead><tr><th>Time</th><th>Ticker</th><th>Size</th><th>Stop</th><th>Target</th><th>Edge</th></tr></thead><tbody>’;
+state.trades.forEach(function(t) {
+html += ‘<tr><td style="color:#5a7080">’+t.time+’</td>’+
+‘<td style="font-weight:800;color:#fff">’+t.ticker+’</td>’+
+‘<td style="color:#ffd700">£’+t.size+’</td>’+
+‘<td style="color:#ff4d4d">$’+t.sl+’</td>’+
+‘<td style="color:#00ff88">$’+t.tp+’</td>’+
+‘<td style="color:#00ff88">+’+(t.edge*100).toFixed(1)+’%</td></tr>’;
+});
+html += ‘</tbody></table></div>’;
+el.innerHTML = html;
+}
+
+//
+// KELLY
+//
+function updateBankroll(val) {
+state.bankroll = parseInt(val);
+document.getElementById(‘bankrollLabel’).textContent = ‘Bankroll: £’ + parseInt(val).toLocaleString();
+document.getElementById(‘hBankroll’).textContent = ‘£’ + parseInt(val).toLocaleString();
+}
+function updateAlpha(val) {
+state.alpha = parseFloat(val);
+document.getElementById(‘alphaLabel’).textContent = ’Fractional Kelly Alpha: ’ + parseFloat(val).toFixed(2);
+}
+function updateMaxExp(val) {
+state.maxExp = parseInt(val) / 100;
+document.getElementById(‘maxExpLabel’).textContent = ’Max Exposure: ’ + val + ‘%’;
+}
+
+function calcKellyLive() {
+var p = parseFloat(document.getElementById(‘kellyP’).value) / 100;
+var b = parseFloat(document.getElementById(‘kellyB’).value);
+var el = document.getElementById(‘kellyResult’);
+if (!p || !b || p <= 0 || p >= 1 || b <= 0) {
+el.innerHTML = ‘<div style="color:#5a7080;font-size:12px;text-align:center;">Enter valid values</div>’;
+return;
+}
+var kelly = (p * b - (1-p)) / b;
+var fracKelly = state.alpha * kelly;
+var posSize = Math.min(Math.max(0, fracKelly) * state.bankroll, state.maxExp * state.bankroll);
+var color = kelly > 0 ? ‘#00ff88’ : ‘#ff4d4d’;
+el.innerHTML = ‘<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">’+
+metricBox(‘FULL KELLY’, (kelly*100).toFixed(1)+’%’, ‘of bankroll’, color)+
+metricBox(‘FRAC KELLY’, (fracKelly*100).toFixed(1)+’%’, ’alpha ’+state.alpha)+
+metricBox(‘POSITION’, ‘£’+posSize.toFixed(0), ‘to invest’, ‘#ffd700’)+
+‘</div>’;
+}
+
+//
+// WATCHLIST
+//
+function renderWatchlist() {
+var el = document.getElementById(‘watchlistContent’);
+var html = ‘’;
+WATCHLIST.forEach(function(w, i) {
+html += ‘<div style="background:#0d1117;border:1px solid #1c2530;border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;">’;
+html += ‘<div style="flex:1"><div style="font-size:16px;font-weight:800;color:#fff">’+w.t+’ <span style="font-size:12px;color:#5a7080;font-weight:400">’+w.n+’</span></div>’;
+html += ‘<div style="font-size:10px;color:#5a7080;margin-top:3px">’+w.s+’ - Catalyst: <span style="color:#ffd700">’+w.c+’</span></div></div>’;
+html += ‘<button onclick="removeTicker('+i+')" style="background:none;border:none;color:#5a7080;cursor:pointer;font-size:16px;">x</button></div>’;
+});
+el.innerHTML = html;
+}
+
+function removeTicker(i) {
+WATCHLIST.splice(i, 1);
+renderWatchlist();
+}
+
+function addTicker() {
+var t = document.getElementById(‘newTickerInput’).value.toUpperCase().trim();
+if (!t) return;
+if (WATCHLIST.find(function(w){return w.t === t;})) {
+alert(t + ’ already in watchlist’);
+return;
+}
+WATCHLIST.push({t:t, n:t, s:‘Custom’, c:’–’, pM:0.50, bp:50});
+document.getElementById(‘newTickerInput’).value = ‘’;
+renderWatchlist();
+}
+
+//
+// TABS
+//
+function showTab(id) {
+var contents = document.querySelectorAll(’.tab-content’);
+for (var i = 0; i < contents.length; i++) contents[i].classList.remove(‘active’);
+var tabs = document.querySelectorAll(’.tab’);
+for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove(‘active’);
+document.getElementById(‘tab-’ + id).classList.add(‘active’);
+for (var k = 0; k < tabs.length; k++) {
+if (tabs[k].dataset.tab === id) tabs[k].classList.add(‘active’);
+}
+}
+
+//
+// EVENT LISTENERS
+//
+document.addEventListener(‘DOMContentLoaded’, function() {
+// Tabs
+var tabs = document.querySelectorAll(’.tab’);
+for (var i = 0; i < tabs.length; i++) {
+tabs[i].addEventListener(‘click’, function() { showTab(this.dataset.tab); });
+}
+// Buttons
+document.getElementById(‘scanBtn’).addEventListener(‘click’, runScan);
+document.getElementById(‘analyseBtn’).addEventListener(‘click’, analyseSignal);
+document.getElementById(‘addTickerBtn’).addEventListener(‘click’, addTicker);
+// Filters
+document.getElementById(‘searchInput’).addEventListener(‘input’, renderScanTable);
+document.getElementById(‘sectorFilter’).addEventListener(‘change’, renderScanTable);
+document.getElementById(‘signalFilter’).addEventListener(‘change’, renderScanTable);
+// Sliders
+document.getElementById(‘bankrollSlider’).addEventListener(‘input’, function() { updateBankroll(this.value); });
+document.getElementById(‘alphaSlider’).addEventListener(‘input’, function() { updateAlpha(this.value); });
+document.getElementById(‘maxExpSlider’).addEventListener(‘input’, function() { updateMaxExp(this.value); });
+document.getElementById(‘kellyP’).addEventListener(‘input’, calcKellyLive);
+document.getElementById(‘kellyB’).addEventListener(‘input’, calcKellyLive);
+
+// Initial render
+renderScanTable();
+renderWatchlist();
+updateLiveBanner();
+// Don’t auto-fetch on load - wait for user to tap Analyse or Run Scan
+});
+</script>
+
+</body>
+</html>
++sd.lastPrice.toFixed(2)+' - Live prices from Mon 2:30pm UK</div>';
+  }
+  html += '<div class="signal-banner" style="background:'+sd.color+'10;border:1px solid '+sd.color+'40">';
+  html += '<div class="signal-cell"><div class="lbl">SIGNAL</div><div class="val" style="color:'+sd.color+'">'+sd.signal+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">EDGE</div><div class="val" style="color:'+sd.color+'">'+(sd.edge>0?'+':'')+(sd.edge*100).toFixed(1)+'%</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">KELLY SIZE</div><div class="val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">CATALYST</div><div class="val" style="color:#ffd700;font-size:14px">'+w.c+'</div></div>';
+  html += '</div>';
+  html += '<div class="card"><div class="card-header">TECHNICAL INDICATORS</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;">';
+  html += metricBox('RSI(14)', sd.rsi.toFixed(1), sd.rsi < 40 ? 'Oversold' : sd.rsi > 70 ? 'Overbought' : 'Neutral', sd.rsi < 40 ? '#00ff88' : sd.rsi > 70 ? '#ff4d4d' : '#ffd700');
+  html += metricBox('TREND', sd.trendBull ? 'BULLISH' : 'BEARISH', 'vs EMA 50', sd.trendBull ? '#00ff88' : '#ff4d4d');
+  html += metricBox('VOLUME', sd.volSpike ? 'SPIKE' : 'Normal', sd.volSpike ? '1.5x avg' : 'Below avg', sd.volSpike ? '#ffd700' : '#5a7080');
+  html += metricBox('SIGNALS', sd.sigCount + '/3', sd.sigCount >= 2 ? 'Confirmed' : 'Need 2+', sd.sigCount >= 2 ? '#00ff88' : '#5a7080');
+  html += '</div></div>';
+  html += '<div class="trade-setup">';
+  html += '<div style="font-size:11px;color:#00ff88;letter-spacing:1px;font-weight:700;margin-bottom:12px;">TRADE SETUP</div>';
+  html += '<div class="trade-cells">';
+  html += '<div class="trade-cell"><span class="tc-lbl">ENTRY</span><span class="tc-val" style="color:#fff">$'+sd.lastPrice.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">STOP LOSS</span><span class="tc-val" style="color:#ff4d4d">$'+sd.stopLoss.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">TARGET</span><span class="tc-val" style="color:#00ff88">$'+sd.takeProfit.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">SIZE</span><span class="tc-val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</span></div>';
+  html += '</div>';
+  html += '<div class="t212-box">Trading 212 ISA: Search '+ticker+' -> Buy -> £'+sd.posSize.toFixed(0)+' -> Stop $'+sd.stopLoss.toFixed(2)+' -> Target $'+sd.takeProfit.toFixed(2)+'</div>';
+  if (sd.signal === 'STRONG BUY' || sd.signal === 'BUY') {
+    html += '<div style="margin-top:12px;text-align:center"><button class="btn btn-green" onclick="executeTrade(\''+ticker+'\','+sd.posSize.toFixed(0)+','+sd.stopLoss.toFixed(2)+','+sd.takeProfit.toFixed(2)+','+sd.edge.toFixed(4)+')">EXECUTE TRADE</button></div>';
+  }
+  html += '</div>';
+  document.getElementById('signalContent').innerHTML = html;
+}
+
+function metricBox(lbl, val, sub, color) {
+return ‘<div class="metric"><div class="lbl">’+lbl+’</div><div class="val" style="color:'+color+'">’+val+’</div><div class="sub">’+sub+’</div></div>’;
+}
+
+//
+// TRADES
+//
+function executeTrade(ticker, size, sl, tp, edge) {
+state.trades.unshift({
+ticker: ticker, size: size, sl: sl, tp: tp, edge: edge,
+time: new Date().toLocaleTimeString()
+});
+document.getElementById(‘hTrades’).textContent = state.trades.length;
+renderTrades();
+showTab(‘trades’);
+}
+
+function renderTrades() {
+var el = document.getElementById(‘tradesContent’);
+if (!state.trades.length) {
+el.innerHTML = ‘<div style="color:#5a7080;font-size:13px;text-align:center;padding:40px 0;">No trades yet</div>’;
+return;
+}
+var html = ‘<div style="overflow-x:auto"><table><thead><tr><th>Time</th><th>Ticker</th><th>Size</th><th>Stop</th><th>Target</th><th>Edge</th></tr></thead><tbody>’;
+state.trades.forEach(function(t) {
+html += ‘<tr><td style="color:#5a7080">’+t.time+’</td>’+
+‘<td style="font-weight:800;color:#fff">’+t.ticker+’</td>’+
+‘<td style="color:#ffd700">£’+t.size+’</td>’+
+‘<td style="color:#ff4d4d">$’+t.sl+’</td>’+
+‘<td style="color:#00ff88">$’+t.tp+’</td>’+
+‘<td style="color:#00ff88">+’+(t.edge*100).toFixed(1)+’%</td></tr>’;
+});
+html += ‘</tbody></table></div>’;
+el.innerHTML = html;
+}
+
+//
+// KELLY
+//
+function updateBankroll(val) {
+state.bankroll = parseInt(val);
+document.getElementById(‘bankrollLabel’).textContent = ‘Bankroll: £’ + parseInt(val).toLocaleString();
+document.getElementById(‘hBankroll’).textContent = ‘£’ + parseInt(val).toLocaleString();
+}
+function updateAlpha(val) {
+state.alpha = parseFloat(val);
+document.getElementById(‘alphaLabel’).textContent = ’Fractional Kelly Alpha: ’ + parseFloat(val).toFixed(2);
+}
+function updateMaxExp(val) {
+state.maxExp = parseInt(val) / 100;
+document.getElementById(‘maxExpLabel’).textContent = ’Max Exposure: ’ + val + ‘%’;
+}
+
+function calcKellyLive() {
+var p = parseFloat(document.getElementById(‘kellyP’).value) / 100;
+var b = parseFloat(document.getElementById(‘kellyB’).value);
+var el = document.getElementById(‘kellyResult’);
+if (!p || !b || p <= 0 || p >= 1 || b <= 0) {
+el.innerHTML = ‘<div style="color:#5a7080;font-size:12px;text-align:center;">Enter valid values</div>’;
+return;
+}
+var kelly = (p * b - (1-p)) / b;
+var fracKelly = state.alpha * kelly;
+var posSize = Math.min(Math.max(0, fracKelly) * state.bankroll, state.maxExp * state.bankroll);
+var color = kelly > 0 ? ‘#00ff88’ : ‘#ff4d4d’;
+el.innerHTML = ‘<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">’+
+metricBox(‘FULL KELLY’, (kelly*100).toFixed(1)+’%’, ‘of bankroll’, color)+
+metricBox(‘FRAC KELLY’, (fracKelly*100).toFixed(1)+’%’, ’alpha ’+state.alpha)+
+metricBox(‘POSITION’, ‘£’+posSize.toFixed(0), ‘to invest’, ‘#ffd700’)+
+‘</div>’;
+}
+
+//
+// WATCHLIST
+//
+function renderWatchlist() {
+var el = document.getElementById(‘watchlistContent’);
+var html = ‘’;
+WATCHLIST.forEach(function(w, i) {
+html += ‘<div style="background:#0d1117;border:1px solid #1c2530;border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;">’;
+html += ‘<div style="flex:1"><div style="font-size:16px;font-weight:800;color:#fff">’+w.t+’ <span style="font-size:12px;color:#5a7080;font-weight:400">’+w.n+’</span></div>’;
+html += ‘<div style="font-size:10px;color:#5a7080;margin-top:3px">’+w.s+’ - Catalyst: <span style="color:#ffd700">’+w.c+’</span></div></div>’;
+html += ‘<button onclick="removeTicker('+i+')" style="background:none;border:none;color:#5a7080;cursor:pointer;font-size:16px;">x</button></div>’;
+});
+el.innerHTML = html;
+}
+
+function removeTicker(i) {
+WATCHLIST.splice(i, 1);
+renderWatchlist();
+}
+
+function addTicker() {
+var t = document.getElementById(‘newTickerInput’).value.toUpperCase().trim();
+if (!t) return;
+if (WATCHLIST.find(function(w){return w.t === t;})) {
+alert(t + ’ already in watchlist’);
+return;
+}
+WATCHLIST.push({t:t, n:t, s:‘Custom’, c:’–’, pM:0.50, bp:50});
+document.getElementById(‘newTickerInput’).value = ‘’;
+renderWatchlist();
+}
+
+//
+// TABS
+//
+function showTab(id) {
+var contents = document.querySelectorAll(’.tab-content’);
+for (var i = 0; i < contents.length; i++) contents[i].classList.remove(‘active’);
+var tabs = document.querySelectorAll(’.tab’);
+for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove(‘active’);
+document.getElementById(‘tab-’ + id).classList.add(‘active’);
+for (var k = 0; k < tabs.length; k++) {
+if (tabs[k].dataset.tab === id) tabs[k].classList.add(‘active’);
+}
+}
+
+//
+// EVENT LISTENERS
+//
+document.addEventListener(‘DOMContentLoaded’, function() {
+// Tabs
+var tabs = document.querySelectorAll(’.tab’);
+for (var i = 0; i < tabs.length; i++) {
+tabs[i].addEventListener(‘click’, function() { showTab(this.dataset.tab); });
+}
+// Buttons
+document.getElementById(‘scanBtn’).addEventListener(‘click’, runScan);
+document.getElementById(‘analyseBtn’).addEventListener(‘click’, analyseSignal);
+document.getElementById(‘addTickerBtn’).addEventListener(‘click’, addTicker);
+// Filters
+document.getElementById(‘searchInput’).addEventListener(‘input’, renderScanTable);
+document.getElementById(‘sectorFilter’).addEventListener(‘change’, renderScanTable);
+document.getElementById(‘signalFilter’).addEventListener(‘change’, renderScanTable);
+// Sliders
+document.getElementById(‘bankrollSlider’).addEventListener(‘input’, function() { updateBankroll(this.value); });
+document.getElementById(‘alphaSlider’).addEventListener(‘input’, function() { updateAlpha(this.value); });
+document.getElementById(‘maxExpSlider’).addEventListener(‘input’, function() { updateMaxExp(this.value); });
+document.getElementById(‘kellyP’).addEventListener(‘input’, calcKellyLive);
+document.getElementById(‘kellyB’).addEventListener(‘input’, calcKellyLive);
+
+// Initial render
+renderScanTable();
+renderWatchlist();
+updateLiveBanner();
+// Don’t auto-fetch on load - wait for user to tap Analyse or Run Scan
 });
 </script>
 
