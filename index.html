@@ -7,175 +7,90 @@
 <title>Predict and Execute Trading Bot</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --green: #00ff88;
-  --gold: #ffd700;
-  --red: #ff4d4d;
-  --blue: #00bfff;
-  --dark: #080c10;
-  --card: #0d1117;
-  --border: #1c2530;
-  --text: #d0dae6;
-  --muted: #5a7080;
-}
-body { font-family: 'Courier New', monospace; background: var(--dark); color: var(--text); min-height: 100vh; }
-
-/* HEADER */
-.header { background: var(–card); border-bottom: 1px solid var(–border); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-.logo { font-size: 16px; font-weight: 800; color: var(–green); letter-spacing: 2px; }
-.logo span { color: var(–text); font-size: 10px; display: block; letter-spacing: 1px; margin-top: 2px; }
+body { font-family: 'Courier New', monospace; background: #080c10; color: #d0dae6; min-height: 100vh; }
+.header { background: #0d1117; border-bottom: 1px solid #1c2530; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.logo { font-size: 16px; font-weight: 800; color: #00ff88; letter-spacing: 2px; }
+.logo span { color: #d0dae6; font-size: 10px; display: block; letter-spacing: 1px; margin-top: 2px; }
 .header-stats { display: flex; gap: 8px; flex-wrap: wrap; }
-.stat-pill { background: #131923; border: 1px solid var(–border); border-radius: 5px; padding: 5px 12px; text-align: center; }
+.stat-pill { background: #131923; border: 1px solid #1c2530; border-radius: 5px; padding: 5px 12px; text-align: center; }
 .stat-pill .val { font-size: 14px; font-weight: 800; display: block; }
-.stat-pill .lbl { font-size: 9px; color: var(–muted); letter-spacing: 1px; }
-
-/* TABS */
-.tabs { display: flex; border-bottom: 1px solid var(–border); background: var(–card); overflow-x: auto; }
-.tab { background: none; border: none; border-bottom: 2px solid transparent; color: var(–muted); padding: 12px 16px; cursor: pointer; font-size: 11px; font-family: inherit; white-space: nowrap; letter-spacing: 1px; transition: all 0.2s; }
-.tab.active { color: var(–green); border-bottom-color: var(–green); }
-
-/* MAIN */
+.stat-pill .lbl { font-size: 9px; color: #5a7080; letter-spacing: 1px; }
+.live-banner { background: rgba(0,255,136,0.06); border-bottom: 1px solid rgba(0,255,136,0.25); padding: 8px 20px; font-size: 11px; color: #00ff88; text-align: center; }
+.live-banner.offline { background: rgba(255,215,0,0.06); border-bottom-color: rgba(255,215,0,0.25); color: #ffd700; }
+.tabs { display: flex; border-bottom: 1px solid #1c2530; background: #0d1117; overflow-x: auto; }
+.tab { background: none; border: none; border-bottom: 2px solid transparent; color: #5a7080; padding: 12px 16px; cursor: pointer; font-size: 11px; font-family: inherit; white-space: nowrap; letter-spacing: 1px; }
+.tab.active { color: #00ff88; border-bottom-color: #00ff88; }
 .main { padding: 20px; }
-.section-label { font-size: 10px; color: var(–green); letter-spacing: 2px; margin-bottom: 8px; font-weight: 700; }
-.section-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 16px; }
-
-/* CARDS */
-.card { background: var(–card); border: 1px solid var(–border); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
-.card-header { font-size: 11px; color: var(–green); letter-spacing: 1px; font-weight: 700; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(–border); }
-
-/* GRID */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
-
-/* SIGNAL BANNER */
-.signal-banner { border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
-.signal-cell .lbl { font-size: 9px; color: var(–muted); letter-spacing: 1px; margin-bottom: 4px; }
-.signal-cell .val { font-size: 18px; font-weight: 800; }
-
-/* METRIC CARD */
-.metric { background: var(–card); border: 1px solid var(–border); border-radius: 8px; padding: 12px; }
-.metric .lbl { font-size: 9px; color: var(–muted); letter-spacing: 1px; margin-bottom: 6px; }
-.metric .val { font-size: 18px; font-weight: 800; }
-.metric .sub { font-size: 10px; color: var(–muted); margin-top: 3px; }
-
-/* TABLE */
-.table-wrap { overflow-x: auto; }
+.card { background: #0d1117; border: 1px solid #1c2530; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+.card-header { font-size: 11px; color: #00ff88; letter-spacing: 1px; font-weight: 700; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #1c2530; }
 table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 600px; }
-th { padding: 8px 12px; text-align: left; color: var(–muted); font-weight: 400; background: var(–card); border-bottom: 1px solid var(–border); position: sticky; top: 0; }
+th { padding: 8px 12px; text-align: left; color: #5a7080; font-weight: 400; background: #0d1117; border-bottom: 1px solid #1c2530; position: sticky; top: 0; }
 td { padding: 8px 12px; border-bottom: 1px solid #131923; }
-tr { cursor: pointer; transition: background 0.15s; }
+tr { cursor: pointer; }
 tr:hover { background: rgba(0,255,136,0.03); }
-
-/* BUTTONS */
-.btn { border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 800; letter-spacing: 1px; transition: all 0.2s; }
+.btn { border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 800; letter-spacing: 1px; }
 .btn-green { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #000; }
-.btn-green:disabled { background: #1c2530; color: var(–muted); cursor: not-allowed; }
-.btn-outline { background: none; border: 1px solid var(–border); color: var(–muted); }
-.btn-sm { padding: 5px 12px; font-size: 10px; }
-
-/* INPUT */
-input, select { background: #131923; border: 1px solid var(–border); color: #fff; padding: 9px 12px; border-radius: 6px; font-family: inherit; font-size: 12px; outline: none; width: 100%; }
-input:focus, select:focus { border-color: var(–green); }
-.input-row { display: flex; gap: 8px; margin-bottom: 16px; }
-.input-row input { flex: 1; }
-
-/* BADGE */
+.btn-green:disabled { background: #1c2530; color: #5a7080; cursor: not-allowed; }
+input, select { background: #131923; border: 1px solid #1c2530; color: #fff; padding: 9px 12px; border-radius: 6px; font-family: inherit; font-size: 12px; outline: none; width: 100%; }
 .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; }
-.badge-green { background: rgba(0,255,136,0.15); color: var(–green); }
-.badge-gold { background: rgba(255,215,0,0.15); color: var(–gold); }
-.badge-red { background: rgba(255,77,77,0.15); color: var(–red); }
-.badge-blue { background: rgba(0,191,255,0.15); color: var(–blue); }
-.badge-gray { background: rgba(90,112,128,0.15); color: var(–muted); }
-
-/* SCAN LOG */
-.log { background: #080c10; border: 1px solid var(–border); border-radius: 6px; padding: 14px; height: 280px; overflow-y: auto; font-size: 10px; line-height: 1.9; }
-.log-line { display: block; }
-.log-green { color: var(–green); }
-.log-red { color: var(–red); }
-.log-muted { color: var(–muted); }
-
-/* CHART */
-.chart-wrap { background: var(–card); border: 1px solid var(–border); border-radius: 8px; padding: 14px; margin-bottom: 12px; }
-
-/* TRADE SETUP */
+.badge-green { background: rgba(0,255,136,0.15); color: #00ff88; }
+.badge-gold { background: rgba(255,215,0,0.15); color: #ffd700; }
+.badge-red { background: rgba(255,77,77,0.15); color: #ff4d4d; }
+.badge-gray { background: rgba(90,112,128,0.15); color: #5a7080; }
+.log { background: #080c10; border: 1px solid #1c2530; border-radius: 6px; padding: 14px; height: 280px; overflow-y: auto; font-size: 10px; line-height: 1.9; }
+.signal-banner { border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+.signal-cell .lbl { font-size: 9px; color: #5a7080; letter-spacing: 1px; margin-bottom: 4px; }
+.signal-cell .val { font-size: 18px; font-weight: 800; }
+.metric { background: #0d1117; border: 1px solid #1c2530; border-radius: 8px; padding: 12px; }
+.metric .lbl { font-size: 9px; color: #5a7080; letter-spacing: 1px; margin-bottom: 6px; }
+.metric .val { font-size: 18px; font-weight: 800; }
+.metric .sub { font-size: 10px; color: #5a7080; margin-top: 3px; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 .trade-setup { background: linear-gradient(135deg, rgba(0,255,136,0.04), transparent); border: 1px solid rgba(0,255,136,0.2); border-radius: 10px; padding: 18px; margin-top: 12px; }
 .trade-cells { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-bottom: 14px; }
 .trade-cell { background: rgba(0,0,0,0.3); border-radius: 6px; padding: 10px; text-align: center; }
-.trade-cell .tc-lbl { font-size: 9px; color: var(–muted); letter-spacing: 1px; display: block; margin-bottom: 4px; }
+.trade-cell .tc-lbl { font-size: 9px; color: #5a7080; letter-spacing: 1px; display: block; margin-bottom: 4px; }
 .trade-cell .tc-val { font-size: 16px; font-weight: 800; display: block; }
-.t212-box { background: rgba(0,0,0,0.3); border-radius: 6px; padding: 12px 14px; font-size: 11px; color: var(–muted); line-height: 1.7; }
-
-/* STRENGTH BARS */
-.strength { display: flex; gap: 3px; align-items: center; }
-.bar { width: 6px; height: 18px; border-radius: 1px; }
-
-/* SLIDER */
+.t212-box { background: rgba(0,0,0,0.3); border-radius: 6px; padding: 12px 14px; font-size: 11px; color: #5a7080; line-height: 1.7; }
+.input-row { display: flex; gap: 8px; margin-bottom: 16px; }
+.input-row input { flex: 1; }
 .slider-row { margin-bottom: 16px; }
-.slider-row label { font-size: 11px; color: var(–muted); display: block; margin-bottom: 6px; }
-input[type=range] { accent-color: var(–green); width: 100%; }
-
-/* ALERT PULSE */
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-.pulse { animation: pulse 1.5s infinite; }
-
-/* TABS CONTENT */
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-
-/* RESPONSIVE */
-@media(max-width:500px) {
-.grid-3 { grid-template-columns: 1fr 1fr; }
-.grid-2 { grid-template-columns: 1fr; }
-.main { padding: 14px; }
-}
+.slider-row label { font-size: 11px; color: #5a7080; display: block; margin-bottom: 6px; }
+input[type=range] { accent-color: #00ff88; width: 100%; }
+@media(max-width:500px) { .main { padding: 14px; } }
 </style>
-
 </head>
 <body>
 
-<!-- HEADER -->
-
 <div class="header">
-  <div class="logo">
-    PREDICT AND EXECUTE
-    <span>KELLY CRITERION ENGINE v2.0</span>
-  </div>
+  <div class="logo">PREDICT AND EXECUTE<span>KELLY CRITERION ENGINE v3.0</span></div>
   <div class="header-stats">
-    <div class="stat-pill"><span class="val" id="hBankroll" style="color:#00ff88">£2,000</span><span class="lbl">BANKROLL</span></div>
-    <div class="stat-pill"><span class="val" id="hExposure" style="color:#ffd700">0%</span><span class="lbl">EXPOSURE</span></div>
+    <div class="stat-pill"><span class="val" id="hBankroll" style="color:#00ff88">£2000</span><span class="lbl">BANKROLL</span></div>
     <div class="stat-pill"><span class="val" id="hTrades" style="color:#00bfff">0</span><span class="lbl">TRADES</span></div>
   </div>
 </div>
 
-<!-- TABS -->
+<div class="live-banner" id="liveBanner">CHECKING LIVE DATA CONNECTION...</div>
 
 <div class="tabs">
-  <button class="tab active" onclick="showTab('scanner')">SCANNER</button>
-  <button class="tab" onclick="showTab('signal')">SIGNAL</button>
-  <button class="tab" onclick="showTab('trades')">TRADES</button>
-  <button class="tab" onclick="showTab('kelly')">KELLY</button>
-  <button class="tab" onclick="showTab('watchlist')">WATCHLIST</button>
-  <button class="tab" onclick="showTab('guide')">T212 GUIDE</button>
+  <button class="tab active" data-tab="scanner">SCANNER</button>
+  <button class="tab" data-tab="signal">SIGNAL</button>
+  <button class="tab" data-tab="trades">TRADES</button>
+  <button class="tab" data-tab="kelly">KELLY</button>
+  <button class="tab" data-tab="watchlist">WATCHLIST</button>
 </div>
-
-<!-- MAIN -->
 
 <div class="main">
 
-<!-- SCANNER TAB -->
-
 <div class="tab-content active" id="tab-scanner">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-    <div style="font-size:12px;color:var(--muted)" id="scanStatus">Run scan to find opportunities</div>
-    <button class="btn btn-green" id="scanBtn" onclick="runScan()">RUN SCAN</button>
+    <div style="font-size:12px;color:#5a7080" id="scanStatus">Run scan to find opportunities</div>
+    <button class="btn btn-green" id="scanBtn">RUN SCAN</button>
   </div>
-
-  <!-- Filter row -->
-
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-    <input type="text" id="searchInput" placeholder="Search ticker..." style="flex:1;min-width:120px;" oninput="filterTable()">
-    <select id="sectorFilter" onchange="filterTable()" style="flex:1;min-width:120px;">
+    <input type="text" id="searchInput" placeholder="Search ticker..." style="flex:1;min-width:120px;">
+    <select id="sectorFilter" style="flex:1;min-width:120px;">
       <option value="">All Sectors</option>
       <option value="AI Chips">AI Chips</option>
       <option value="Memory">Memory</option>
@@ -183,635 +98,235 @@ input[type=range] { accent-color: var(–green); width: 100%; }
       <option value="AI Cloud">AI Cloud</option>
       <option value="AI Power">AI Power</option>
       <option value="AI Software">AI Software</option>
-      <option value="AI Real Estate">AI Real Estate</option>
       <option value="Cloud SaaS">Cloud SaaS</option>
       <option value="Cybersec">Cybersec</option>
       <option value="Growth">Growth</option>
       <option value="Biotech">Biotech</option>
       <option value="Quantum">Quantum</option>
       <option value="Fintech">Fintech</option>
-      <option value="S&P500 Finance">S&P500 Finance</option>
-      <option value="S&P500 Health">S&P500 Health</option>
-      <option value="S&P500 Industrial">S&P500 Industrial</option>
-      <option value="S&P500 Consumer">S&P500 Consumer</option>
-      <option value="S&P500 Energy">S&P500 Energy</option>
-      <option value="S&P500 Materials">S&P500 Materials</option>
       <option value="EV">EV</option>
-      <option value="Clean Tech">Clean Tech</option>
       <option value="UK FTSE">UK FTSE</option>
       <option value="UK AIM">UK AIM</option>
       <option value="Speculative">Speculative</option>
     </select>
-    <select id="signalFilter" onchange="filterTable()" style="flex:1;min-width:120px;">
+    <select id="signalFilter" style="flex:1;min-width:120px;">
       <option value="">All Signals</option>
       <option value="STRONG BUY">Strong Buy</option>
       <option value="BUY">Buy</option>
       <option value="AVOID">Avoid</option>
     </select>
   </div>
-
   <div style="display:grid;grid-template-columns:1fr 280px;gap:16px;">
     <div style="overflow-x:auto;max-height:500px;overflow-y:auto;">
       <table id="scanTable">
-        <thead>
-          <tr>
-            <th>Ticker</th>
-            <th>Sector</th>
-            <th>Catalyst</th>
-            <th>P(Mkt)</th>
-            <th>P(Model)</th>
-            <th>Edge</th>
-            <th>RSI</th>
-            <th>Trend</th>
-            <th>Signal</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Ticker</th><th>Price</th><th>Sector</th><th>Catalyst</th><th>Edge</th><th>RSI</th><th>Trend</th><th>Signal</th></tr></thead>
         <tbody id="scanBody"></tbody>
       </table>
     </div>
     <div>
-      <div class="section-label" style="margin-bottom:8px;">AGENT LOG</div>
-      <div class="log" id="scanLog"><span class="log-muted">Awaiting scan...</span></div>
+      <div style="font-size:10px;color:#00ff88;letter-spacing:2px;margin-bottom:8px;font-weight:700;">AGENT LOG</div>
+      <div class="log" id="scanLog"><span style="color:#5a7080">Awaiting scan...</span></div>
     </div>
   </div>
 </div>
-
-<!-- SIGNAL TAB -->
 
 <div class="tab-content" id="tab-signal">
   <div class="input-row">
     <input type="text" id="tickerInput" placeholder="Enter ticker e.g. NVDA" value="NVDA" style="text-transform:uppercase">
-    <button class="btn btn-green" onclick="analyseSignal()">ANALYSE</button>
+    <button class="btn btn-green" id="analyseBtn">ANALYSE</button>
   </div>
-
   <div id="signalContent">
-    <div style="color:var(--muted);font-size:13px;text-align:center;padding:40px 0;">Enter a ticker and tap Analyse</div>
+    <div style="color:#5a7080;font-size:13px;text-align:center;padding:40px 0;">Enter a ticker and tap Analyse</div>
   </div>
 </div>
-
-<!-- TRADES TAB -->
 
 <div class="tab-content" id="tab-trades">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-    <div class="section-label">TRADE LOG</div>
-    <button class="btn btn-outline btn-sm" onclick="clearTrades()">Clear All</button>
-  </div>
+  <div style="font-size:10px;color:#00ff88;letter-spacing:2px;margin-bottom:14px;font-weight:700;">TRADE LOG</div>
   <div id="tradesContent">
-    <div style="color:var(--muted);font-size:13px;text-align:center;padding:40px 0;">No trades yet</div>
+    <div style="color:#5a7080;font-size:13px;text-align:center;padding:40px 0;">No trades yet</div>
   </div>
 </div>
-
-<!-- KELLY TAB -->
 
 <div class="tab-content" id="tab-kelly">
   <div class="card">
-    <div class="card-header">KELLY CRITERION POSITION SIZING</div>
+    <div class="card-header">KELLY CRITERION SETTINGS</div>
     <div class="slider-row">
-      <label id="bankrollLabel">Bankroll: £2,000</label>
-      <input type="range" min="500" max="50000" step="500" value="2000" oninput="updateKelly(this.value,'bankroll')">
+      <label id="bankrollLabel">Bankroll: £2000</label>
+      <input type="range" min="500" max="50000" step="500" value="2000" id="bankrollSlider">
     </div>
     <div class="slider-row">
       <label id="alphaLabel">Fractional Kelly Alpha: 0.35</label>
-      <input type="range" min="0.1" max="1.0" step="0.05" value="0.35" oninput="updateKelly(this.value,'alpha')">
+      <input type="range" min="0.1" max="1.0" step="0.05" value="0.35" id="alphaSlider">
     </div>
     <div class="slider-row">
       <label id="maxExpLabel">Max Exposure: 25%</label>
-      <input type="range" min="5" max="50" step="5" value="25" oninput="updateKelly(this.value,'maxexp')">
+      <input type="range" min="5" max="50" step="5" value="25" id="maxExpSlider">
     </div>
   </div>
-
   <div class="card">
     <div class="card-header">LIVE KELLY CALCULATOR</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Win Probability %</label>
-        <input type="number" id="kellyP" placeholder="e.g. 65" min="1" max="99" oninput="calcKellyLive()">
+        <label style="font-size:11px;color:#5a7080;display:block;margin-bottom:4px;">Win Probability %</label>
+        <input type="number" id="kellyP" placeholder="e.g. 65" min="1" max="99">
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Reward:Risk Ratio</label>
-        <input type="number" id="kellyB" placeholder="e.g. 2.5" step="0.1" oninput="calcKellyLive()">
+        <label style="font-size:11px;color:#5a7080;display:block;margin-bottom:4px;">Reward:Risk Ratio</label>
+        <input type="number" id="kellyB" placeholder="e.g. 2.5" step="0.1">
       </div>
     </div>
     <div id="kellyResult" style="background:#080c10;border-radius:8px;padding:16px;">
-      <div style="color:var(--muted);font-size:12px;text-align:center;">Enter values above to calculate</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">FORMULAS REFERENCE</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-      <div style="background:#080c10;border-radius:6px;padding:12px;">
-        <div style="font-size:9px;color:var(--muted);margin-bottom:6px;">KELLY CRITERION</div>
-        <div style="color:var(--gold);font-size:13px;font-weight:700;">f* = (p*b - q) / b</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:4px;">q = 1 - p</div>
-      </div>
-      <div style="background:#080c10;border-radius:6px;padding:12px;">
-        <div style="font-size:9px;color:var(--muted);margin-bottom:6px;">EDGE</div>
-        <div style="color:var(--gold);font-size:13px;font-weight:700;">edge = p_model - p_mkt</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:4px;">Trade when edge > 4%</div>
-      </div>
-      <div style="background:#080c10;border-radius:6px;padding:12px;">
-        <div style="font-size:9px;color:var(--muted);margin-bottom:6px;">FRACTIONAL KELLY</div>
-        <div style="color:var(--gold);font-size:13px;font-weight:700;">f = alpha * f*</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:4px;">Use alpha = 0.25 to 0.5</div>
-      </div>
-      <div style="background:#080c10;border-radius:6px;padding:12px;">
-        <div style="font-size:9px;color:var(--muted);margin-bottom:6px;">VAR 95%</div>
-        <div style="color:var(--gold);font-size:13px;font-weight:700;">VaR = mu - 1.645 * sigma</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:4px;">Max daily loss 95% conf</div>
-      </div>
+      <div style="color:#5a7080;font-size:12px;text-align:center;">Enter values above to calculate</div>
     </div>
   </div>
 </div>
-
-<!-- WATCHLIST TAB -->
 
 <div class="tab-content" id="tab-watchlist">
   <div class="input-row">
     <input type="text" id="newTickerInput" placeholder="Add ticker e.g. AAPL" style="text-transform:uppercase">
-    <button class="btn btn-green" onclick="addToWatchlist()">+ ADD</button>
+    <button class="btn btn-green" id="addTickerBtn">+ ADD</button>
   </div>
   <div id="watchlistContent"></div>
 </div>
 
-<!-- T212 GUIDE TAB -->
-
-<div class="tab-content" id="tab-guide">
-  <div class="card">
-    <div class="card-header">WHEN SIGNAL FIRES - WHAT TO DO ON TRADING 212</div>
-    <div id="guideSteps"></div>
-  </div>
-
-  <div class="card" style="margin-top:12px;">
-    <div class="card-header">YOUR WEEKLY SCHEDULE</div>
-    <div id="weekSchedule"></div>
-  </div>
 </div>
-
-</div><!-- end main -->
 
 <script>
 // ═══════════════════════════════════════════════════════
-// STATE
+// WATCHLIST DATA
 // ═══════════════════════════════════════════════════════
+var WATCHLIST = [
+  {t:'NVDA',n:'Nvidia',s:'AI Chips',c:'May 20',pM:0.61,bp:209},
+  {t:'AMD',n:'AMD',s:'AI Chips',c:'--',pM:0.58,bp:412},
+  {t:'AVGO',n:'Broadcom',s:'AI Chips',c:'Jun 5',pM:0.52,bp:1850},
+  {t:'TSM',n:'Taiwan Semi',s:'AI Chips',c:'Jul 17',pM:0.59,bp:215},
+  {t:'ASML',n:'ASML',s:'AI Chips',c:'Jul 16',pM:0.55,bp:920},
+  {t:'AMAT',n:'Applied Materials',s:'AI Chips',c:'May 14',pM:0.52,bp:198},
+  {t:'MRVL',n:'Marvell',s:'AI Chips',c:'May 29',pM:0.48,bp:78},
+  {t:'ARM',n:'ARM',s:'AI Chips',c:'Aug',pM:0.41,bp:217},
+  {t:'QCOM',n:'Qualcomm',s:'AI Chips',c:'Jul 30',pM:0.54,bp:175},
+  {t:'INTC',n:'Intel',s:'AI Chips',c:'Jul 24',pM:0.38,bp:22},
+  {t:'LRCX',n:'Lam Research',s:'AI Chips',c:'Jul 23',pM:0.51,bp:780},
+  {t:'KLAC',n:'KLA Corp',s:'AI Chips',c:'Jul 24',pM:0.53,bp:780},
+  {t:'ONTO',n:'Onto Innovation',s:'AI Chips',c:'Aug 6',pM:0.49,bp:293},
+  {t:'TXN',n:'Texas Instruments',s:'AI Chips',c:'Apr 22',pM:0.50,bp:175},
+  {t:'ADI',n:'Analog Devices',s:'AI Chips',c:'May 21',pM:0.51,bp:185},
+  {t:'MU',n:'Micron',s:'Memory',c:'Jul 1',pM:0.67,bp:757},
+  {t:'SNDK',n:'SanDisk',s:'Memory',c:'Aug',pM:0.52,bp:1388},
+  {t:'WDC',n:'Western Digital',s:'Memory',c:'Jul 30',pM:0.48,bp:52},
+  {t:'STX',n:'Seagate',s:'Memory',c:'Jul 22',pM:0.45,bp:105},
+  {t:'MSFT',n:'Microsoft',s:'Big Tech',c:'Jul 28',pM:0.63,bp:415},
+  {t:'GOOGL',n:'Alphabet',s:'Big Tech',c:'Jul 22',pM:0.58,bp:195},
+  {t:'META',n:'Meta',s:'Big Tech',c:'Jul 30',pM:0.60,bp:720},
+  {t:'AMZN',n:'Amazon',s:'Big Tech',c:'Jul 31',pM:0.56,bp:234},
+  {t:'AAPL',n:'Apple',s:'Big Tech',c:'Jul 31',pM:0.51,bp:232},
+  {t:'BABA',n:'Alibaba',s:'Big Tech',c:'May 13',pM:0.55,bp:142},
+  {t:'NFLX',n:'Netflix',s:'Big Tech',c:'Apr 15',pM:0.57,bp:1180},
+  {t:'CRWV',n:'CoreWeave',s:'AI Cloud',c:'Aug',pM:0.42,bp:132},
+  {t:'SMCI',n:'Super Micro',s:'AI Cloud',c:'Aug 6',pM:0.39,bp:34},
+  {t:'DELL',n:'Dell',s:'AI Cloud',c:'May 29',pM:0.51,bp:148},
+  {t:'BE',n:'Bloom Energy',s:'AI Power',c:'Jul 31',pM:0.47,bp:285},
+  {t:'VRT',n:'Vertiv',s:'AI Power',c:'Jul 23',pM:0.51,bp:340},
+  {t:'CEG',n:'Constellation Energy',s:'AI Power',c:'May 11',pM:0.54,bp:358},
+  {t:'OKLO',n:'Oklo Nuclear',s:'AI Power',c:'May 12',pM:0.36,bp:92},
+  {t:'VST',n:'Vistra Energy',s:'AI Power',c:'May 7',pM:0.52,bp:165},
+  {t:'GEV',n:'GE Vernova',s:'AI Power',c:'Apr 23',pM:0.55,bp:380},
+  {t:'PLTR',n:'Palantir',s:'AI Software',c:'Aug 5',pM:0.48,bp:165},
+  {t:'AI',n:'C3.ai',s:'AI Software',c:'Jun 4',pM:0.32,bp:28},
+  {t:'BBAI',n:'BigBear.ai',s:'AI Software',c:'May 12',pM:0.28,bp:3},
+  {t:'SOUN',n:'SoundHound',s:'AI Software',c:'May 8',pM:0.35,bp:18},
+  {t:'APP',n:'Applovin',s:'AI Software',c:'May 7',pM:0.55,bp:380},
+  {t:'TTD',n:'Trade Desk',s:'AI Software',c:'May 7',pM:0.49,bp:88},
+  {t:'CRM',n:'Salesforce',s:'Cloud SaaS',c:'May 28',pM:0.55,bp:298},
+  {t:'NOW',n:'ServiceNow',s:'Cloud SaaS',c:'Apr 23',pM:0.57,bp:1080},
+  {t:'SNOW',n:'Snowflake',s:'Cloud SaaS',c:'May 21',pM:0.46,bp:178},
+  {t:'DDOG',n:'Datadog',s:'Cloud SaaS',c:'Aug 7',pM:0.55,bp:184},
+  {t:'NET',n:'Cloudflare',s:'Cloud SaaS',c:'Aug 7',pM:0.43,bp:178},
+  {t:'ADBE',n:'Adobe',s:'Cloud SaaS',c:'Jun 11',pM:0.52,bp:388},
+  {t:'PANW',n:'Palo Alto',s:'Cybersec',c:'May 20',pM:0.53,bp:195},
+  {t:'CRWD',n:'CrowdStrike',s:'Cybersec',c:'Jun 4',pM:0.49,bp:478},
+  {t:'FTNT',n:'Fortinet',s:'Cybersec',c:'Aug 6',pM:0.52,bp:105},
+  {t:'CSCO',n:'Cisco',s:'Cybersec',c:'May 13',pM:0.48,bp:64},
+  {t:'HIMS',n:'Hims and Hers',s:'Growth',c:'May 11',pM:0.44,bp:29},
+  {t:'ONON',n:'On Holding',s:'Growth',c:'May 12',pM:0.46,bp:35},
+  {t:'CELH',n:'Celsius',s:'Growth',c:'May 6',pM:0.42,bp:28},
+  {t:'DUOL',n:'Duolingo',s:'Growth',c:'May 7',pM:0.54,bp:380},
+  {t:'CAVA',n:'CAVA Group',s:'Growth',c:'May 21',pM:0.51,bp:118},
+  {t:'UBER',n:'Uber',s:'Growth',c:'May 7',pM:0.55,bp:88},
+  {t:'ABNB',n:'Airbnb',s:'Growth',c:'May 8',pM:0.52,bp:148},
+  {t:'RDDT',n:'Reddit',s:'Growth',c:'May 1',pM:0.46,bp:148},
+  {t:'LLY',n:'Eli Lilly',s:'Biotech',c:'Aug 6',pM:0.60,bp:978},
+  {t:'NVO',n:'Novo Nordisk',s:'Biotech',c:'Aug 6',pM:0.58,bp:68},
+  {t:'REGN',n:'Regeneron',s:'Biotech',c:'May 7',pM:0.55,bp:698},
+  {t:'VRTX',n:'Vertex Pharma',s:'Biotech',c:'Apr 28',pM:0.54,bp:518},
+  {t:'CELC',n:'Celcuity',s:'Biotech',c:'Jul',pM:0.41,bp:28},
+  {t:'QBTS',n:'D-Wave Quantum',s:'Quantum',c:'May 12',pM:0.34,bp:24},
+  {t:'IONQ',n:'IonQ',s:'Quantum',c:'May 8',pM:0.30,bp:32},
+  {t:'RGTI',n:'Rigetti',s:'Quantum',c:'May 12',pM:0.28,bp:12},
+  {t:'COIN',n:'Coinbase',s:'Fintech',c:'May 8',pM:0.47,bp:248},
+  {t:'HOOD',n:'Robinhood',s:'Fintech',c:'May 8',pM:0.43,bp:28},
+  {t:'SOFI',n:'SoFi',s:'Fintech',c:'May 1',pM:0.39,bp:12},
+  {t:'PYPL',n:'PayPal',s:'Fintech',c:'Apr 29',pM:0.50,bp:68},
+  {t:'TSLA',n:'Tesla',s:'EV',c:'Jul 23',pM:0.50,bp:298},
+  {t:'RIVN',n:'Rivian',s:'EV',c:'May 6',pM:0.35,bp:12},
+  {t:'RR',n:'Rolls-Royce',s:'UK FTSE',c:'Jul 30',pM:0.58,bp:1198},
+  {t:'AZN',n:'AstraZeneca',s:'UK FTSE',c:'May 12',pM:0.55,bp:78},
+  {t:'SHEL',n:'Shell',s:'UK FTSE',c:'May 2',pM:0.48,bp:28},
+  {t:'GSK',n:'GSK',s:'UK FTSE',c:'Jul 30',pM:0.51,bp:18},
+  {t:'BP',n:'BP',s:'UK FTSE',c:'Aug 5',pM:0.42,bp:4},
+  {t:'HSBA',n:'HSBC',s:'UK FTSE',c:'May 6',pM:0.52,bp:9},
+  {t:'BARC',n:'Barclays',s:'UK FTSE',c:'May 1',pM:0.50,bp:3},
+  {t:'LLOY',n:'Lloyds',s:'UK FTSE',c:'Apr 30',pM:0.47,bp:1},
+  {t:'VOD',n:'Vodafone',s:'UK FTSE',c:'May 13',pM:0.40,bp:1},
+  {t:'NG',n:'National Grid',s:'UK FTSE',c:'May 22',pM:0.50,bp:11},
+  {t:'BA',n:'BAE Systems',s:'UK FTSE',c:'May 1',pM:0.56,bp:14},
+  {t:'CWR',n:'Ceres Power',s:'UK AIM',c:'Jun',pM:0.33,bp:1},
+  {t:'AFC',n:'AFC Energy',s:'UK AIM',c:'Jun',pM:0.28,bp:0.5},
+  {t:'ITM',n:'ITM Power',s:'UK AIM',c:'Jun',pM:0.30,bp:0.6},
+  {t:'FTC',n:'Filtronic',s:'UK AIM',c:'Q3',pM:0.38,bp:3},
+  {t:'PHE',n:'Powerhouse Energy',s:'UK AIM',c:'Q3',pM:0.25,bp:0.4},
+  {t:'AAOI',n:'Applied Optoelec',s:'Speculative',c:'--',pM:0.35,bp:146},
+  {t:'MSTR',n:'MicroStrategy',s:'Speculative',c:'Apr 29',pM:0.44,bp:398}
+];
 
+// State
 var state = {
   bankroll: 2000,
   alpha: 0.35,
   maxExp: 0.25,
   trades: [],
-  watchlist: [
-    // ── AI CHIPS AND SEMICONDUCTORS ──
-    {ticker:'NVDA', name:'Nvidia', sector:'AI Chips', catalyst:'May 20', pMkt:0.61, active:true},
-    {ticker:'AMD',  name:'AMD', sector:'AI Chips', catalyst:'--', pMkt:0.58, active:true},
-    {ticker:'AVGO', name:'Broadcom', sector:'AI Chips', catalyst:'Jun 5', pMkt:0.52, active:true},
-    {ticker:'TSM',  name:'Taiwan Semi', sector:'AI Chips', catalyst:'Jul 17', pMkt:0.59, active:true},
-    {ticker:'ASML', name:'ASML Holding', sector:'AI Chips', catalyst:'Jul 16', pMkt:0.55, active:true},
-    {ticker:'AMAT', name:'Applied Materials', sector:'AI Chips', catalyst:'May 14', pMkt:0.52, active:true},
-    {ticker:'MRVL', name:'Marvell Tech', sector:'AI Chips', catalyst:'May 29', pMkt:0.48, active:false},
-    {ticker:'ARM',  name:'ARM Holdings', sector:'AI Chips', catalyst:'Aug', pMkt:0.41, active:false},
-    {ticker:'QCOM', name:'Qualcomm', sector:'AI Chips', catalyst:'Jul 30', pMkt:0.54, active:false},
-    {ticker:'INTC', name:'Intel', sector:'AI Chips', catalyst:'Jul 24', pMkt:0.38, active:false},
-    {ticker:'LRCX', name:'Lam Research', sector:'AI Chips', catalyst:'Jul 23', pMkt:0.51, active:false},
-    {ticker:'KLAC', name:'KLA Corp', sector:'AI Chips', catalyst:'Jul 24', pMkt:0.53, active:false},
-    {ticker:'MPWR', name:'Monolithic Power', sector:'AI Chips', catalyst:'Jul 30', pMkt:0.49, active:false},
-    {ticker:'ON',   name:'ON Semiconductor', sector:'AI Chips', catalyst:'Apr 28', pMkt:0.46, active:false},
-    {ticker:'TXN',  name:'Texas Instruments', sector:'AI Chips', catalyst:'Apr 22', pMkt:0.50, active:false},
-    {ticker:'ADI',  name:'Analog Devices', sector:'AI Chips', catalyst:'May 21', pMkt:0.51, active:false},
-    {ticker:'MCHP', name:'Microchip Tech', sector:'AI Chips', catalyst:'May 8', pMkt:0.44, active:false},
-    {ticker:'SWKS', name:'Skyworks Solutions', sector:'AI Chips', catalyst:'May 6', pMkt:0.42, active:false},
-    {ticker:'ONTO', name:'Onto Innovation', sector:'AI Chips', catalyst:'Aug 6', pMkt:0.49, active:false},
-    {ticker:'COHU', name:'Cohu Inc', sector:'AI Chips', catalyst:'May 8', pMkt:0.38, active:false},
-    // ── MEMORY ──
-    {ticker:'MU',   name:'Micron', sector:'Memory', catalyst:'Jul 1', pMkt:0.67, active:true},
-    {ticker:'SNDK', name:'SanDisk', sector:'Memory', catalyst:'Aug', pMkt:0.52, active:true},
-    {ticker:'WDC',  name:'Western Digital', sector:'Memory', catalyst:'Jul 30', pMkt:0.48, active:false},
-    {ticker:'STX',  name:'Seagate', sector:'Memory', catalyst:'Jul 22', pMkt:0.45, active:false},
-    // ── BIG TECH ──
-    {ticker:'MSFT', name:'Microsoft', sector:'Big Tech', catalyst:'Jul 28', pMkt:0.63, active:true},
-    {ticker:'GOOGL',name:'Alphabet', sector:'Big Tech', catalyst:'Jul 22', pMkt:0.58, active:true},
-    {ticker:'META', name:'Meta Platforms', sector:'Big Tech', catalyst:'Jul 30', pMkt:0.60, active:true},
-    {ticker:'AMZN', name:'Amazon', sector:'Big Tech', catalyst:'Jul 31', pMkt:0.56, active:true},
-    {ticker:'AAPL', name:'Apple', sector:'Big Tech', catalyst:'Jul 31', pMkt:0.51, active:false},
-    {ticker:'BABA', name:'Alibaba', sector:'Big Tech', catalyst:'May 13', pMkt:0.55, active:false},
-    {ticker:'TCEHY',name:'Tencent', sector:'Big Tech', catalyst:'May 14', pMkt:0.52, active:false},
-    {ticker:'BIDU', name:'Baidu', sector:'Big Tech', catalyst:'May 20', pMkt:0.42, active:false},
-    {ticker:'JD',   name:'JD.com', sector:'Big Tech', catalyst:'May 15', pMkt:0.44, active:false},
-    {ticker:'NFLX', name:'Netflix', sector:'Big Tech', catalyst:'Apr 15', pMkt:0.57, active:false},
-    {ticker:'SPOT', name:'Spotify', sector:'Big Tech', catalyst:'Apr 29', pMkt:0.52, active:false},
-    // ── AI CLOUD AND INFRASTRUCTURE ──
-    {ticker:'CRWV', name:'CoreWeave', sector:'AI Cloud', catalyst:'Aug', pMkt:0.42, active:false},
-    {ticker:'SMCI', name:'Super Micro', sector:'AI Cloud', catalyst:'Aug 6', pMkt:0.39, active:false},
-    {ticker:'DELL', name:'Dell Technologies', sector:'AI Cloud', catalyst:'May 29', pMkt:0.51, active:false},
-    {ticker:'HPE',  name:'HP Enterprise', sector:'AI Cloud', catalyst:'Jun 4', pMkt:0.44, active:false},
-    {ticker:'NTAP', name:'NetApp', sector:'AI Cloud', catalyst:'May 28', pMkt:0.46, active:false},
-    {ticker:'PSTG', name:'Pure Storage', sector:'AI Cloud', catalyst:'Jun 4', pMkt:0.50, active:false},
-    {ticker:'IOT',  name:'Samsara', sector:'AI Cloud', catalyst:'May 29', pMkt:0.47, active:false},
-    {ticker:'GTLB', name:'GitLab', sector:'AI Cloud', catalyst:'Jun 4', pMkt:0.44, active:false},
-    // ── AI POWER AND ENERGY ──
-    {ticker:'BE',   name:'Bloom Energy', sector:'AI Power', catalyst:'Jul 31', pMkt:0.47, active:true},
-    {ticker:'VRT',  name:'Vertiv', sector:'AI Power', catalyst:'Jul 23', pMkt:0.51, active:true},
-    {ticker:'CEG',  name:'Constellation Energy', sector:'AI Power', catalyst:'May 11', pMkt:0.54, active:false},
-    {ticker:'OKLO', name:'Oklo Nuclear', sector:'AI Power', catalyst:'May 12', pMkt:0.36, active:false},
-    {ticker:'NRG',  name:'NRG Energy', sector:'AI Power', catalyst:'May 7', pMkt:0.49, active:false},
-    {ticker:'VST',  name:'Vistra Energy', sector:'AI Power', catalyst:'May 7', pMkt:0.52, active:false},
-    {ticker:'PCG',  name:'PG and E', sector:'AI Power', catalyst:'May 15', pMkt:0.44, active:false},
-    {ticker:'NEE',  name:'NextEra Energy', sector:'AI Power', catalyst:'Apr 22', pMkt:0.51, active:false},
-    {ticker:'AES',  name:'AES Corp', sector:'AI Power', catalyst:'May 8', pMkt:0.43, active:false},
-    {ticker:'GEV',  name:'GE Vernova', sector:'AI Power', catalyst:'Apr 23', pMkt:0.55, active:false},
-    {ticker:'ETR',  name:'Entergy', sector:'AI Power', catalyst:'Apr 30', pMkt:0.47, active:false},
-    // ── AI SOFTWARE ──
-    {ticker:'PLTR', name:'Palantir', sector:'AI Software', catalyst:'Aug 5', pMkt:0.48, active:true},
-    {ticker:'AI',   name:'C3.ai', sector:'AI Software', catalyst:'Jun 4', pMkt:0.32, active:false},
-    {ticker:'BBAI', name:'BigBear.ai', sector:'AI Software', catalyst:'May 12', pMkt:0.28, active:false},
-    {ticker:'SOUN', name:'SoundHound AI', sector:'AI Software', catalyst:'May 8', pMkt:0.35, active:false},
-    {ticker:'PATH', name:'UiPath', sector:'AI Software', catalyst:'Jun 11', pMkt:0.42, active:false},
-    {ticker:'AMBA', name:'Ambarella', sector:'AI Software', catalyst:'May 28', pMkt:0.41, active:false},
-    {ticker:'GFAI', name:'Guardforce AI', sector:'AI Software', catalyst:'--', pMkt:0.25, active:false},
-    {ticker:'CPNG', name:'Coupang', sector:'AI Software', catalyst:'May 6', pMkt:0.50, active:false},
-    {ticker:'APP',  name:'Applovin', sector:'AI Software', catalyst:'May 7', pMkt:0.55, active:false},
-    {ticker:'TTD',  name:'The Trade Desk', sector:'AI Software', catalyst:'May 7', pMkt:0.49, active:false},
-    // ── CLOUD AND SAAS ──
-    {ticker:'CRM',  name:'Salesforce', sector:'Cloud SaaS', catalyst:'May 28', pMkt:0.55, active:false},
-    {ticker:'NOW',  name:'ServiceNow', sector:'Cloud SaaS', catalyst:'Apr 23', pMkt:0.57, active:false},
-    {ticker:'SNOW', name:'Snowflake', sector:'Cloud SaaS', catalyst:'May 21', pMkt:0.46, active:false},
-    {ticker:'DDOG', name:'Datadog', sector:'Cloud SaaS', catalyst:'Aug 7', pMkt:0.55, active:false},
-    {ticker:'NET',  name:'Cloudflare', sector:'Cloud SaaS', catalyst:'Aug 7', pMkt:0.43, active:false},
-    {ticker:'HUBS', name:'HubSpot', sector:'Cloud SaaS', catalyst:'May 7', pMkt:0.49, active:false},
-    {ticker:'ZS',   name:'Zscaler', sector:'Cloud SaaS', catalyst:'May 20', pMkt:0.47, active:false},
-    {ticker:'VEEV', name:'Veeva Systems', sector:'Cloud SaaS', catalyst:'May 28', pMkt:0.52, active:false},
-    {ticker:'MDB',  name:'MongoDB', sector:'Cloud SaaS', catalyst:'Jun 4', pMkt:0.46, active:false},
-    {ticker:'BILL', name:'Bill Holdings', sector:'Cloud SaaS', catalyst:'May 8', pMkt:0.43, active:false},
-    {ticker:'DOCN', name:'DigitalOcean', sector:'Cloud SaaS', catalyst:'May 8', pMkt:0.41, active:false},
-    {ticker:'TWLO', name:'Twilio', sector:'Cloud SaaS', catalyst:'May 1', pMkt:0.45, active:false},
-    {ticker:'ZM',   name:'Zoom Video', sector:'Cloud SaaS', catalyst:'May 20', pMkt:0.40, active:false},
-    {ticker:'ADBE', name:'Adobe', sector:'Cloud SaaS', catalyst:'Jun 11', pMkt:0.52, active:false},
-    {ticker:'INTU', name:'Intuit', sector:'Cloud SaaS', catalyst:'May 22', pMkt:0.54, active:false},
-    {ticker:'WDAY', name:'Workday', sector:'Cloud SaaS', catalyst:'May 22', pMkt:0.50, active:false},
-    // ── CYBERSECURITY ──
-    {ticker:'PANW', name:'Palo Alto Networks', sector:'Cybersec', catalyst:'May 20', pMkt:0.53, active:false},
-    {ticker:'CRWD', name:'CrowdStrike', sector:'Cybersec', catalyst:'Jun 4', pMkt:0.49, active:false},
-    {ticker:'FTNT', name:'Fortinet', sector:'Cybersec', catalyst:'Aug 6', pMkt:0.52, active:false},
-    {ticker:'S',    name:'SentinelOne', sector:'Cybersec', catalyst:'Jun 4', pMkt:0.41, active:false},
-    {ticker:'CSCO', name:'Cisco', sector:'Cybersec', catalyst:'May 13', pMkt:0.48, active:false},
-    {ticker:'OKTA', name:'Okta', sector:'Cybersec', catalyst:'May 28', pMkt:0.44, active:false},
-    {ticker:'RPD',  name:'Rapid7', sector:'Cybersec', catalyst:'May 6', pMkt:0.39, active:false},
-    {ticker:'TENB', name:'Tenable', sector:'Cybersec', catalyst:'Apr 30', pMkt:0.42, active:false},
-    // ── GROWTH AND MOMENTUM ──
-    {ticker:'HIMS', name:'Hims and Hers', sector:'Growth', catalyst:'May 11', pMkt:0.44, active:true},
-    {ticker:'ONON', name:'On Holding', sector:'Growth', catalyst:'May 12', pMkt:0.46, active:true},
-    {ticker:'CELH', name:'Celsius Holdings', sector:'Growth', catalyst:'May 6', pMkt:0.42, active:false},
-    {ticker:'DUOL', name:'Duolingo', sector:'Growth', catalyst:'May 7', pMkt:0.54, active:false},
-    {ticker:'CAVA', name:'CAVA Group', sector:'Growth', catalyst:'May 21', pMkt:0.51, active:false},
-    {ticker:'PINS', name:'Pinterest', sector:'Growth', catalyst:'May 1', pMkt:0.48, active:false},
-    {ticker:'SNAP', name:'Snap Inc', sector:'Growth', catalyst:'Apr 29', pMkt:0.38, active:false},
-    {ticker:'RDDT', name:'Reddit', sector:'Growth', catalyst:'May 1', pMkt:0.46, active:false},
-    {ticker:'UBER', name:'Uber', sector:'Growth', catalyst:'May 7', pMkt:0.55, active:false},
-    {ticker:'LYFT', name:'Lyft', sector:'Growth', catalyst:'May 6', pMkt:0.39, active:false},
-    {ticker:'ABNB', name:'Airbnb', sector:'Growth', catalyst:'May 8', pMkt:0.52, active:false},
-    {ticker:'DASH', name:'DoorDash', sector:'Growth', catalyst:'May 7', pMkt:0.47, active:false},
-    {ticker:'RBLX', name:'Roblox', sector:'Growth', catalyst:'May 8', pMkt:0.41, active:false},
-    {ticker:'U',    name:'Unity Software', sector:'Growth', catalyst:'May 8', pMkt:0.36, active:false},
-    // ── S AND P 500 FINANCIALS ──
-    {ticker:'JPM',  name:'JPMorgan Chase', sector:'S&P500 Finance', catalyst:'Apr 11', pMkt:0.58, active:false},
-    {ticker:'BAC',  name:'Bank of America', sector:'S&P500 Finance', catalyst:'Apr 15', pMkt:0.52, active:false},
-    {ticker:'WFC',  name:'Wells Fargo', sector:'S&P500 Finance', catalyst:'Apr 11', pMkt:0.50, active:false},
-    {ticker:'GS',   name:'Goldman Sachs', sector:'S&P500 Finance', catalyst:'Apr 14', pMkt:0.55, active:false},
-    {ticker:'MS',   name:'Morgan Stanley', sector:'S&P500 Finance', catalyst:'Apr 16', pMkt:0.53, active:false},
-    {ticker:'BLK',  name:'BlackRock', sector:'S&P500 Finance', catalyst:'Apr 11', pMkt:0.54, active:false},
-    {ticker:'AXP',  name:'American Express', sector:'S&P500 Finance', catalyst:'Apr 17', pMkt:0.52, active:false},
-    {ticker:'V',    name:'Visa', sector:'S&P500 Finance', catalyst:'Apr 29', pMkt:0.57, active:false},
-    {ticker:'MA',   name:'Mastercard', sector:'S&P500 Finance', catalyst:'Apr 29', pMkt:0.56, active:false},
-    {ticker:'BRK',  name:'Berkshire Hathaway', sector:'S&P500 Finance', catalyst:'May 3', pMkt:0.55, active:false},
-    {ticker:'APO',  name:'Apollo Global', sector:'S&P500 Finance', catalyst:'May 7', pMkt:0.53, active:false},
-    {ticker:'KKR',  name:'KKR and Co', sector:'S&P500 Finance', catalyst:'May 1', pMkt:0.52, active:false},
-    {ticker:'BX',   name:'Blackstone', sector:'S&P500 Finance', catalyst:'Apr 17', pMkt:0.51, active:false},
-    {ticker:'SCHW', name:'Charles Schwab', sector:'S&P500 Finance', catalyst:'Apr 16', pMkt:0.50, active:false},
-    // ── S AND P 500 HEALTHCARE ──
-    {ticker:'LLY',  name:'Eli Lilly', sector:'S&P500 Health', catalyst:'Aug 6', pMkt:0.60, active:false},
-    {ticker:'NVO',  name:'Novo Nordisk', sector:'S&P500 Health', catalyst:'Aug 6', pMkt:0.58, active:false},
-    {ticker:'JNJ',  name:'Johnson and Johnson', sector:'S&P500 Health', catalyst:'Apr 15', pMkt:0.52, active:false},
-    {ticker:'UNH',  name:'UnitedHealth', sector:'S&P500 Health', catalyst:'Apr 17', pMkt:0.50, active:false},
-    {ticker:'ABBV', name:'AbbVie', sector:'S&P500 Health', catalyst:'Apr 25', pMkt:0.53, active:false},
-    {ticker:'MRK',  name:'Merck', sector:'S&P500 Health', catalyst:'Apr 24', pMkt:0.51, active:false},
-    {ticker:'PFE',  name:'Pfizer', sector:'S&P500 Health', catalyst:'Apr 29', pMkt:0.44, active:false},
-    {ticker:'TMO',  name:'Thermo Fisher', sector:'S&P500 Health', catalyst:'Apr 23', pMkt:0.52, active:false},
-    {ticker:'DHR',  name:'Danaher', sector:'S&P500 Health', catalyst:'Apr 22', pMkt:0.50, active:false},
-    {ticker:'ISRG', name:'Intuitive Surgical', sector:'S&P500 Health', catalyst:'Apr 22', pMkt:0.55, active:false},
-    {ticker:'REGN', name:'Regeneron', sector:'S&P500 Health', catalyst:'May 7', pMkt:0.55, active:false},
-    {ticker:'GILD', name:'Gilead Sciences', sector:'S&P500 Health', catalyst:'Apr 24', pMkt:0.50, active:false},
-    {ticker:'VRTX', name:'Vertex Pharma', sector:'S&P500 Health', catalyst:'Apr 28', pMkt:0.54, active:false},
-    {ticker:'MRNA', name:'Moderna', sector:'S&P500 Health', catalyst:'May 2', pMkt:0.38, active:false},
-    {ticker:'BSX',  name:'Boston Scientific', sector:'S&P500 Health', catalyst:'Apr 23', pMkt:0.53, active:false},
-    {ticker:'ELV',  name:'Elevance Health', sector:'S&P500 Health', catalyst:'Apr 17', pMkt:0.49, active:false},
-    // ── S AND P 500 INDUSTRIALS ──
-    {ticker:'GE',   name:'GE Aerospace', sector:'S&P500 Industrial', catalyst:'Apr 22', pMkt:0.55, active:false},
-    {ticker:'CAT',  name:'Caterpillar', sector:'S&P500 Industrial', catalyst:'Apr 30', pMkt:0.52, active:false},
-    {ticker:'HON',  name:'Honeywell', sector:'S&P500 Industrial', catalyst:'Apr 24', pMkt:0.50, active:false},
-    {ticker:'RTX',  name:'RTX Corp', sector:'S&P500 Industrial', catalyst:'Apr 22', pMkt:0.53, active:false},
-    {ticker:'LMT',  name:'Lockheed Martin', sector:'S&P500 Industrial', catalyst:'Apr 22', pMkt:0.52, active:false},
-    {ticker:'NOC',  name:'Northrop Grumman', sector:'S&P500 Industrial', catalyst:'Apr 23', pMkt:0.51, active:false},
-    {ticker:'BA',   name:'Boeing', sector:'S&P500 Industrial', catalyst:'Apr 23', pMkt:0.44, active:false},
-    {ticker:'DE',   name:'John Deere', sector:'S&P500 Industrial', catalyst:'May 15', pMkt:0.50, active:false},
-    {ticker:'UPS',  name:'UPS', sector:'S&P500 Industrial', catalyst:'Apr 29', pMkt:0.47, active:false},
-    {ticker:'FDX',  name:'FedEx', sector:'S&P500 Industrial', catalyst:'Jun 24', pMkt:0.49, active:false},
-    {ticker:'MMM',  name:'3M', sector:'S&P500 Industrial', catalyst:'Apr 22', pMkt:0.48, active:false},
-    {ticker:'EMR',  name:'Emerson Electric', sector:'S&P500 Industrial', catalyst:'May 7', pMkt:0.50, active:false},
-    {ticker:'ITW',  name:'Illinois Tool Works', sector:'S&P500 Industrial', catalyst:'Apr 30', pMkt:0.52, active:false},
-    // ── S AND P 500 CONSUMER ──
-    {ticker:'WMT',  name:'Walmart', sector:'S&P500 Consumer', catalyst:'May 21', pMkt:0.55, active:false},
-    {ticker:'COST', name:'Costco', sector:'S&P500 Consumer', catalyst:'Jun 26', pMkt:0.56, active:false},
-    {ticker:'TGT',  name:'Target', sector:'S&P500 Consumer', catalyst:'May 21', pMkt:0.43, active:false},
-    {ticker:'NKE',  name:'Nike', sector:'S&P500 Consumer', catalyst:'Jun 26', pMkt:0.45, active:false},
-    {ticker:'LULU', name:'Lululemon', sector:'S&P500 Consumer', catalyst:'Jun 4', pMkt:0.48, active:false},
-    {ticker:'SBUX', name:'Starbucks', sector:'S&P500 Consumer', catalyst:'Apr 29', pMkt:0.47, active:false},
-    {ticker:'MCD',  name:'McDonalds', sector:'S&P500 Consumer', catalyst:'Apr 29', pMkt:0.50, active:false},
-    {ticker:'PG',   name:'Procter and Gamble', sector:'S&P500 Consumer', catalyst:'Apr 24', pMkt:0.52, active:false},
-    {ticker:'KO',   name:'Coca Cola', sector:'S&P500 Consumer', catalyst:'Apr 29', pMkt:0.51, active:false},
-    {ticker:'PEP',  name:'PepsiCo', sector:'S&P500 Consumer', catalyst:'Apr 24', pMkt:0.50, active:false},
-    {ticker:'PM',   name:'Philip Morris', sector:'S&P500 Consumer', catalyst:'Apr 22', pMkt:0.52, active:false},
-    {ticker:'MO',   name:'Altria Group', sector:'S&P500 Consumer', catalyst:'Apr 29', pMkt:0.48, active:false},
-    {ticker:'CL',   name:'Colgate-Palmolive', sector:'S&P500 Consumer', catalyst:'Apr 25', pMkt:0.50, active:false},
-    {ticker:'EL',   name:'Estee Lauder', sector:'S&P500 Consumer', catalyst:'May 2', pMkt:0.42, active:false},
-    // ── S AND P 500 ENERGY ──
-    {ticker:'XOM',  name:'ExxonMobil', sector:'S&P500 Energy', catalyst:'May 2', pMkt:0.50, active:false},
-    {ticker:'CVX',  name:'Chevron', sector:'S&P500 Energy', catalyst:'May 2', pMkt:0.49, active:false},
-    {ticker:'COP',  name:'ConocoPhillips', sector:'S&P500 Energy', catalyst:'May 8', pMkt:0.48, active:false},
-    {ticker:'OXY',  name:'Occidental Petroleum', sector:'S&P500 Energy', catalyst:'May 6', pMkt:0.44, active:false},
-    {ticker:'SLB',  name:'Schlumberger', sector:'S&P500 Energy', catalyst:'Apr 18', pMkt:0.48, active:false},
-    {ticker:'HAL',  name:'Halliburton', sector:'S&P500 Energy', catalyst:'Apr 22', pMkt:0.45, active:false},
-    {ticker:'EOG',  name:'EOG Resources', sector:'S&P500 Energy', catalyst:'May 1', pMkt:0.49, active:false},
-    // ── S AND P 500 MATERIALS ──
-    {ticker:'LIN',  name:'Linde', sector:'S&P500 Materials', catalyst:'Apr 24', pMkt:0.53, active:false},
-    {ticker:'APD',  name:'Air Products', sector:'S&P500 Materials', catalyst:'May 1', pMkt:0.49, active:false},
-    {ticker:'FCX',  name:'Freeport-McMoRan', sector:'S&P500 Materials', catalyst:'Apr 22', pMkt:0.47, active:false},
-    {ticker:'NEM',  name:'Newmont', sector:'S&P500 Materials', catalyst:'Apr 23', pMkt:0.50, active:false},
-    {ticker:'ALB',  name:'Albemarle', sector:'S&P500 Materials', catalyst:'May 7', pMkt:0.46, active:false},
-    {ticker:'DD',   name:'DuPont', sector:'S&P500 Materials', catalyst:'May 6', pMkt:0.48, active:false},
-    // ── BIOTECH AND PHARMA ──
-    {ticker:'RXRX', name:'Recursion Pharma', sector:'Biotech', catalyst:'May 12', pMkt:0.36, active:false},
-    {ticker:'NVAX', name:'Novavax', sector:'Biotech', catalyst:'May 8', pMkt:0.31, active:false},
-    {ticker:'BMRN', name:'BioMarin', sector:'Biotech', catalyst:'Apr 29', pMkt:0.48, active:false},
-    {ticker:'ALNY', name:'Alnylam Pharma', sector:'Biotech', catalyst:'May 1', pMkt:0.52, active:false},
-    {ticker:'IONS', name:'Ionis Pharma', sector:'Biotech', catalyst:'May 8', pMkt:0.44, active:false},
-    {ticker:'BEAM', name:'Beam Therapeutics', sector:'Biotech', catalyst:'May 7', pMkt:0.35, active:false},
-    {ticker:'CRSP', name:'CRISPR Therapeutics', sector:'Biotech', catalyst:'May 7', pMkt:0.38, active:false},
-    {ticker:'NTLA', name:'Intellia Therapeutics', sector:'Biotech', catalyst:'May 8', pMkt:0.33, active:false},
-    {ticker:'CELC', name:'Celcuity', sector:'Biotech', catalyst:'Jul', pMkt:0.41, active:false},
-    {ticker:'RYTM', name:'Rhythm Pharma', sector:'Biotech', catalyst:'May 8', pMkt:0.45, active:false},
-    // ── QUANTUM ──
-    {ticker:'QBTS', name:'D-Wave Quantum', sector:'Quantum', catalyst:'May 12', pMkt:0.34, active:true},
-    {ticker:'IONQ', name:'IonQ', sector:'Quantum', catalyst:'May 8', pMkt:0.30, active:false},
-    {ticker:'RGTI', name:'Rigetti Computing', sector:'Quantum', catalyst:'May 12', pMkt:0.28, active:false},
-    {ticker:'QUBT', name:'Quantum Computing Inc', sector:'Quantum', catalyst:'May 13', pMkt:0.26, active:false},
-    {ticker:'ARQQ', name:'Arqit Quantum', sector:'Quantum', catalyst:'--', pMkt:0.24, active:false},
-    // ── FINTECH ──
-    {ticker:'COIN', name:'Coinbase', sector:'Fintech', catalyst:'May 8', pMkt:0.47, active:false},
-    {ticker:'SQ',   name:'Block Inc', sector:'Fintech', catalyst:'May 8', pMkt:0.44, active:false},
-    {ticker:'AFRM', name:'Affirm', sector:'Fintech', catalyst:'May 8', pMkt:0.41, active:false},
-    {ticker:'HOOD', name:'Robinhood', sector:'Fintech', catalyst:'May 8', pMkt:0.43, active:false},
-    {ticker:'SOFI', name:'SoFi Technologies', sector:'Fintech', catalyst:'May 1', pMkt:0.39, active:false},
-    {ticker:'NU',   name:'Nu Holdings', sector:'Fintech', catalyst:'May 13', pMkt:0.52, active:false},
-    {ticker:'PYPL', name:'PayPal', sector:'Fintech', catalyst:'Apr 29', pMkt:0.50, active:false},
-    {ticker:'SMAR', name:'Smartsheet', sector:'Fintech', catalyst:'Jun 4', pMkt:0.44, active:false},
-    {ticker:'FIS',  name:'Fidelity National', sector:'Fintech', catalyst:'May 6', pMkt:0.50, active:false},
-    // ── EV AND CLEAN TECH ──
-    {ticker:'TSLA', name:'Tesla', sector:'EV', catalyst:'Jul 23', pMkt:0.50, active:false},
-    {ticker:'RIVN', name:'Rivian', sector:'EV', catalyst:'May 6', pMkt:0.35, active:false},
-    {ticker:'LCID', name:'Lucid Motors', sector:'EV', catalyst:'May 6', pMkt:0.28, active:false},
-    {ticker:'CHPT', name:'ChargePoint', sector:'EV', catalyst:'Jun 5', pMkt:0.29, active:false},
-    {ticker:'ENPH', name:'Enphase Energy', sector:'Clean Tech', catalyst:'Apr 22', pMkt:0.40, active:false},
-    {ticker:'FSLR', name:'First Solar', sector:'Clean Tech', catalyst:'May 7', pMkt:0.50, active:false},
-    {ticker:'SEDG', name:'SolarEdge', sector:'Clean Tech', catalyst:'May 7', pMkt:0.32, active:false},
-    {ticker:'PLUG', name:'Plug Power', sector:'Clean Tech', catalyst:'May 8', pMkt:0.28, active:false},
-    {ticker:'BE',   name:'Bloom Energy', sector:'Clean Tech', catalyst:'Jul 31', pMkt:0.47, active:false},
-    // ── AI REAL ESTATE ──
-    {ticker:'KRC',  name:'Kilroy Realty', sector:'AI Real Estate', catalyst:'Jul 30', pMkt:0.41, active:false},
-    {ticker:'EQIX', name:'Equinix', sector:'AI Real Estate', catalyst:'Apr 30', pMkt:0.53, active:false},
-    {ticker:'DLR',  name:'Digital Realty', sector:'AI Real Estate', catalyst:'Apr 24', pMkt:0.49, active:false},
-    {ticker:'DGXX', name:'Digi Power X', sector:'AI Real Estate', catalyst:'Q4', pMkt:0.32, active:false},
-    {ticker:'IRM',  name:'Iron Mountain', sector:'AI Real Estate', catalyst:'May 1', pMkt:0.50, active:false},
-    {ticker:'CCI',  name:'Crown Castle', sector:'AI Real Estate', catalyst:'Apr 23', pMkt:0.46, active:false},
-    {ticker:'AMT',  name:'American Tower', sector:'AI Real Estate', catalyst:'Apr 29', pMkt:0.49, active:false},
-    // ── UK FTSE 100 ──
-    {ticker:'RR',   name:'Rolls-Royce', sector:'UK FTSE', catalyst:'Jul 30', pMkt:0.58, active:true},
-    {ticker:'AZN',  name:'AstraZeneca', sector:'UK FTSE', catalyst:'May 12', pMkt:0.55, active:true},
-    {ticker:'SHEL', name:'Shell', sector:'UK FTSE', catalyst:'May 2', pMkt:0.48, active:false},
-    {ticker:'GSK',  name:'GSK plc', sector:'UK FTSE', catalyst:'Jul 30', pMkt:0.51, active:false},
-    {ticker:'BP',   name:'BP plc', sector:'UK FTSE', catalyst:'Aug 5', pMkt:0.42, active:false},
-    {ticker:'HSBA', name:'HSBC Holdings', sector:'UK FTSE', catalyst:'May 6', pMkt:0.52, active:false},
-    {ticker:'BARC', name:'Barclays', sector:'UK FTSE', catalyst:'May 1', pMkt:0.50, active:false},
-    {ticker:'LLOY', name:'Lloyds Banking', sector:'UK FTSE', catalyst:'Apr 30', pMkt:0.47, active:false},
-    {ticker:'NWG',  name:'NatWest Group', sector:'UK FTSE', catalyst:'May 2', pMkt:0.49, active:false},
-    {ticker:'STAN', name:'Standard Chartered', sector:'UK FTSE', catalyst:'May 1', pMkt:0.48, active:false},
-    {ticker:'VOD',  name:'Vodafone', sector:'UK FTSE', catalyst:'May 13', pMkt:0.40, active:false},
-    {ticker:'BT',   name:'BT Group', sector:'UK FTSE', catalyst:'May 15', pMkt:0.41, active:false},
-    {ticker:'NG',   name:'National Grid', sector:'UK FTSE', catalyst:'May 22', pMkt:0.50, active:false},
-    {ticker:'SSE',  name:'SSE plc', sector:'UK FTSE', catalyst:'May 21', pMkt:0.49, active:false},
-    {ticker:'SGE',  name:'Sage Group', sector:'UK FTSE', catalyst:'May 21', pMkt:0.51, active:false},
-    {ticker:'AUTO', name:'Auto Trader', sector:'UK FTSE', catalyst:'May 21', pMkt:0.52, active:false},
-    {ticker:'EXPN', name:'Experian', sector:'UK FTSE', catalyst:'May 14', pMkt:0.53, active:false},
-    {ticker:'REL',  name:'RELX Group', sector:'UK FTSE', catalyst:'Apr 30', pMkt:0.54, active:false},
-    {ticker:'DGE',  name:'Diageo', sector:'UK FTSE', catalyst:'Jan 28', pMkt:0.44, active:false},
-    {ticker:'ULVR', name:'Unilever', sector:'UK FTSE', catalyst:'Apr 30', pMkt:0.50, active:false},
-    {ticker:'RIO',  name:'Rio Tinto', sector:'UK FTSE', catalyst:'Apr 23', pMkt:0.48, active:false},
-    {ticker:'AAL',  name:'Anglo American', sector:'UK FTSE', catalyst:'Apr 23', pMkt:0.44, active:false},
-    {ticker:'GLEN', name:'Glencore', sector:'UK FTSE', catalyst:'May 1', pMkt:0.46, active:false},
-    {ticker:'BA',   name:'BAE Systems', sector:'UK FTSE', catalyst:'May 1', pMkt:0.56, active:false},
-    {ticker:'IMB',  name:'Imperial Brands', sector:'UK FTSE', catalyst:'May 14', pMkt:0.49, active:false},
-    {ticker:'BATS', name:'British American Tobacco', sector:'UK FTSE', catalyst:'Apr 30', pMkt:0.48, active:false},
-    {ticker:'CPG',  name:'Compass Group', sector:'UK FTSE', catalyst:'May 20', pMkt:0.51, active:false},
-    {ticker:'INF',  name:'Informa', sector:'UK FTSE', catalyst:'Apr 30', pMkt:0.50, active:false},
-    {ticker:'WPP',  name:'WPP plc', sector:'UK FTSE', catalyst:'Apr 30', pMkt:0.42, active:false},
-    {ticker:'PSON', name:'Pearson', sector:'UK FTSE', catalyst:'Apr 30', pMkt:0.48, active:false},
-    {ticker:'LAND', name:'Land Securities', sector:'UK FTSE', catalyst:'May 14', pMkt:0.44, active:false},
-    {ticker:'BLND', name:'British Land', sector:'UK FTSE', catalyst:'May 14', pMkt:0.43, active:false},
-    {ticker:'PRU',  name:'Prudential plc', sector:'UK FTSE', catalyst:'Mar 12', pMkt:0.49, active:false},
-    {ticker:'LGEN', name:'Legal and General', sector:'UK FTSE', catalyst:'Mar 5', pMkt:0.48, active:false},
-    {ticker:'SXNX', name:'Smith and Nephew', sector:'UK FTSE', catalyst:'Apr 30', pMkt:0.47, active:false},
-    // ── UK AIM AND EMERGING ──
-    {ticker:'FTC',  name:'Filtronic', sector:'UK AIM', catalyst:'Q3', pMkt:0.38, active:true},
-    {ticker:'PHE',  name:'Powerhouse Energy', sector:'UK AIM', catalyst:'Q3', pMkt:0.25, active:false},
-    {ticker:'CWR',  name:'Ceres Power', sector:'UK AIM', catalyst:'Jun', pMkt:0.33, active:true},
-    {ticker:'AFC',  name:'AFC Energy', sector:'UK AIM', catalyst:'Jun', pMkt:0.28, active:false},
-    {ticker:'ITM',  name:'ITM Power', sector:'UK AIM', catalyst:'Jun', pMkt:0.30, active:false},
-    {ticker:'BOO',  name:'Boohoo Group', sector:'UK AIM', catalyst:'Apr', pMkt:0.28, active:false},
-    {ticker:'ASOS', name:'ASOS', sector:'UK AIM', catalyst:'Apr', pMkt:0.30, active:false},
-    {ticker:'MONY', name:'MoneySupermarket', sector:'UK AIM', catalyst:'Mar', pMkt:0.48, active:false},
-    {ticker:'FEVR', name:'Fever-Tree', sector:'UK AIM', catalyst:'Mar', pMkt:0.42, active:false},
-    {ticker:'MACF', name:'Macfarlane Group', sector:'UK AIM', catalyst:'Mar', pMkt:0.44, active:false},
-    {ticker:'STCM', name:'Stagecoach Group', sector:'UK AIM', catalyst:'Jun', pMkt:0.40, active:false},
-    {ticker:'AVON', name:'Avon Protection', sector:'UK AIM', catalyst:'May', pMkt:0.42, active:false},
-    {ticker:'MTFB', name:'Motif Bio', sector:'UK AIM', catalyst:'--', pMkt:0.22, active:false},
-    {ticker:'SDX',  name:'SDX Energy', sector:'UK AIM', catalyst:'--', pMkt:0.28, active:false},
-    {ticker:'HYD',  name:'Hydrogen Utopia', sector:'UK AIM', catalyst:'Q3', pMkt:0.26, active:false},
-    {ticker:'HARL', name:'Harland and Wolff', sector:'UK AIM', catalyst:'Jun', pMkt:0.30, active:false},
-    {ticker:'TRX',  name:'Tissue Regenix', sector:'UK AIM', catalyst:'--', pMkt:0.25, active:false},
-    {ticker:'FLOW', name:'Flow Traders', sector:'UK AIM', catalyst:'--', pMkt:0.40, active:false},
-    {ticker:'NANO', name:'Nanoco Group', sector:'UK AIM', catalyst:'--', pMkt:0.28, active:false},
-    {ticker:'TRMR', name:'Tremor International', sector:'UK AIM', catalyst:'May', pMkt:0.38, active:false},
-    // ── SPECULATIVE ──
-    {ticker:'AAOI', name:'Applied Optoelec', sector:'Speculative', catalyst:'--', pMkt:0.35, active:false},
-    {ticker:'MSTR', name:'MicroStrategy', sector:'Speculative', catalyst:'Apr 29', pMkt:0.44, active:false},
-    {ticker:'GME',  name:'GameStop', sector:'Speculative', catalyst:'Jun', pMkt:0.30, active:false},
-    {ticker:'BBBY', name:'Bed Bath Beyond', sector:'Speculative', catalyst:'--', pMkt:0.20, active:false},
-    {ticker:'SPCE', name:'Virgin Galactic', sector:'Speculative', catalyst:'--', pMkt:0.22, active:false},
-    {ticker:'NKLA', name:'Nikola Corp', sector:'Speculative', catalyst:'--', pMkt:0.18, active:false},
-  ],
-    {ticker:'AMD',  name:'AMD', sector:'AI Chips', catalyst:'--', pMkt:0.58, active:true},
-    {ticker:'AVGO', name:'Broadcom', sector:'AI Chips', catalyst:'Jun 5', pMkt:0.52, active:true},
-    {ticker:'TSM',  name:'Taiwan Semi', sector:'AI Chips', catalyst:'Jul 17', pMkt:0.59, active:true},
-    {ticker:'ASML', name:'ASML Holding', sector:'AI Chips', catalyst:'Jul 16', pMkt:0.55, active:true},
-    {ticker:'AMAT', name:'Applied Materials', sector:'AI Chips', catalyst:'May 14', pMkt:0.52, active:true},
-    {ticker:'MRVL', name:'Marvell Tech', sector:'AI Chips', catalyst:'May 29', pMkt:0.48, active:false},
-    {ticker:'ARM',  name:'ARM Holdings', sector:'AI Chips', catalyst:'Aug', pMkt:0.41, active:false},
-    {ticker:'QCOM', name:'Qualcomm', sector:'AI Chips', catalyst:'Jul 30', pMkt:0.54, active:false},
-    {ticker:'INTC', name:'Intel', sector:'AI Chips', catalyst:'Jul 24', pMkt:0.38, active:false},
-    {ticker:'LRCX', name:'Lam Research', sector:'AI Chips', catalyst:'Jul 23', pMkt:0.51, active:false},
-    {ticker:'KLAC', name:'KLA Corp', sector:'AI Chips', catalyst:'Jul 24', pMkt:0.53, active:false},
-    {ticker:'MPWR', name:'Monolithic Power', sector:'AI Chips', catalyst:'Jul 30', pMkt:0.49, active:false},
-    {ticker:'ON',   name:'ON Semiconductor', sector:'AI Chips', catalyst:'Apr 28', pMkt:0.46, active:false},
-    // MEMORY
-    {ticker:'MU',   name:'Micron', sector:'Memory', catalyst:'Jul 1', pMkt:0.67, active:true},
-    {ticker:'SNDK', name:'SanDisk', sector:'Memory', catalyst:'Aug', pMkt:0.52, active:true},
-    {ticker:'WDC',  name:'Western Digital', sector:'Memory', catalyst:'Jul 30', pMkt:0.48, active:false},
-    {ticker:'STX',  name:'Seagate', sector:'Memory', catalyst:'Jul 22', pMkt:0.45, active:false},
-    // BIG TECH
-    {ticker:'MSFT', name:'Microsoft', sector:'Big Tech', catalyst:'Jul 28', pMkt:0.63, active:true},
-    {ticker:'GOOGL',name:'Alphabet', sector:'Big Tech', catalyst:'Jul 22', pMkt:0.58, active:true},
-    {ticker:'META', name:'Meta Platforms', sector:'Big Tech', catalyst:'Jul 30', pMkt:0.60, active:true},
-    {ticker:'AMZN', name:'Amazon', sector:'Big Tech', catalyst:'Jul 31', pMkt:0.56, active:true},
-    {ticker:'AAPL', name:'Apple', sector:'Big Tech', catalyst:'Jul 31', pMkt:0.51, active:false},
-    {ticker:'BABA', name:'Alibaba', sector:'Big Tech', catalyst:'May 13', pMkt:0.55, active:false},
-    {ticker:'TCEHY',name:'Tencent', sector:'Big Tech', catalyst:'May 14', pMkt:0.52, active:false},
-    // AI CLOUD AND INFRASTRUCTURE
-    {ticker:'CRWV', name:'CoreWeave', sector:'AI Cloud', catalyst:'Aug', pMkt:0.42, active:false},
-    {ticker:'SMCI', name:'Super Micro', sector:'AI Cloud', catalyst:'Aug 6', pMkt:0.39, active:false},
-    {ticker:'DELL', name:'Dell Technologies', sector:'AI Cloud', catalyst:'May 29', pMkt:0.51, active:false},
-    {ticker:'HPE',  name:'HP Enterprise', sector:'AI Cloud', catalyst:'Jun 4', pMkt:0.44, active:false},
-    {ticker:'NTAP', name:'NetApp', sector:'AI Cloud', catalyst:'May 28', pMkt:0.46, active:false},
-    {ticker:'PSTG', name:'Pure Storage', sector:'AI Cloud', catalyst:'Jun 4', pMkt:0.50, active:false},
-    // AI POWER AND ENERGY
-    {ticker:'BE',   name:'Bloom Energy', sector:'AI Power', catalyst:'Jul 31', pMkt:0.47, active:true},
-    {ticker:'VRT',  name:'Vertiv', sector:'AI Power', catalyst:'Jul 23', pMkt:0.51, active:true},
-    {ticker:'CEG',  name:'Constellation Energy', sector:'AI Power', catalyst:'May 11', pMkt:0.54, active:false},
-    {ticker:'OKLO', name:'Oklo Nuclear', sector:'AI Power', catalyst:'May 12', pMkt:0.36, active:false},
-    {ticker:'NRG',  name:'NRG Energy', sector:'AI Power', catalyst:'May 7', pMkt:0.49, active:false},
-    {ticker:'VST',  name:'Vistra Energy', sector:'AI Power', catalyst:'May 7', pMkt:0.52, active:false},
-    {ticker:'ETR',  name:'Entergy', sector:'AI Power', catalyst:'Apr 30', pMkt:0.47, active:false},
-    {ticker:'PCG',  name:'PG and E', sector:'AI Power', catalyst:'May 15', pMkt:0.44, active:false},
-    // AI SOFTWARE
-    {ticker:'PLTR', name:'Palantir', sector:'AI Software', catalyst:'Aug 5', pMkt:0.48, active:true},
-    {ticker:'AI',   name:'C3.ai', sector:'AI Software', catalyst:'Jun 4', pMkt:0.32, active:false},
-    {ticker:'BBAI', name:'BigBear.ai', sector:'AI Software', catalyst:'May 12', pMkt:0.28, active:false},
-    {ticker:'SOUN', name:'SoundHound AI', sector:'AI Software', catalyst:'May 8', pMkt:0.35, active:false},
-    {ticker:'PATH', name:'UiPath', sector:'AI Software', catalyst:'Jun 11', pMkt:0.42, active:false},
-    // CLOUD AND SAAS
-    {ticker:'CRM',  name:'Salesforce', sector:'Cloud SaaS', catalyst:'May 28', pMkt:0.55, active:false},
-    {ticker:'NOW',  name:'ServiceNow', sector:'Cloud SaaS', catalyst:'Apr 23', pMkt:0.57, active:false},
-    {ticker:'SNOW', name:'Snowflake', sector:'Cloud SaaS', catalyst:'May 21', pMkt:0.46, active:false},
-    {ticker:'DDOG', name:'Datadog', sector:'Cloud SaaS', catalyst:'Aug 7', pMkt:0.55, active:false},
-    {ticker:'NET',  name:'Cloudflare', sector:'Cloud SaaS', catalyst:'Aug 7', pMkt:0.43, active:false},
-    {ticker:'HUBS', name:'HubSpot', sector:'Cloud SaaS', catalyst:'May 7', pMkt:0.49, active:false},
-    {ticker:'ZS',   name:'Zscaler', sector:'Cloud SaaS', catalyst:'May 20', pMkt:0.47, active:false},
-    {ticker:'PANW', name:'Palo Alto Networks', sector:'Cybersec', catalyst:'May 20', pMkt:0.53, active:false},
-    {ticker:'CRWD', name:'CrowdStrike', sector:'Cybersec', catalyst:'Jun 4', pMkt:0.49, active:false},
-    {ticker:'FTNT', name:'Fortinet', sector:'Cybersec', catalyst:'Aug 6', pMkt:0.52, active:false},
-    {ticker:'S',    name:'SentinelOne', sector:'Cybersec', catalyst:'Jun 4', pMkt:0.41, active:false},
-    {ticker:'CSCO', name:'Cisco', sector:'Cybersec', catalyst:'May 13', pMkt:0.48, active:false},
-    // GROWTH AND MOMENTUM
-    {ticker:'HIMS', name:'Hims and Hers', sector:'Growth', catalyst:'May 11', pMkt:0.44, active:true},
-    {ticker:'ONON', name:'On Holding', sector:'Growth', catalyst:'May 12', pMkt:0.46, active:true},
-    {ticker:'CELH', name:'Celsius Holdings', sector:'Growth', catalyst:'May 6', pMkt:0.42, active:false},
-    {ticker:'DUOL', name:'Duolingo', sector:'Growth', catalyst:'May 7', pMkt:0.54, active:false},
-    {ticker:'CAVA', name:'CAVA Group', sector:'Growth', catalyst:'May 21', pMkt:0.51, active:false},
-    {ticker:'RXRX', name:'Recursion Pharma', sector:'Biotech', catalyst:'May 12', pMkt:0.36, active:false},
-    {ticker:'NVAX', name:'Novavax', sector:'Biotech', catalyst:'May 8', pMkt:0.31, active:false},
-    {ticker:'REGN', name:'Regeneron', sector:'Biotech', catalyst:'May 7', pMkt:0.55, active:false},
-    {ticker:'LLY',  name:'Eli Lilly', sector:'Biotech', catalyst:'Aug 6', pMkt:0.60, active:false},
-    {ticker:'NVO',  name:'Novo Nordisk', sector:'Biotech', catalyst:'Aug 6', pMkt:0.58, active:false},
-    // QUANTUM
-    {ticker:'QBTS', name:'D-Wave Quantum', sector:'Quantum', catalyst:'May 12', pMkt:0.34, active:true},
-    {ticker:'IONQ', name:'IonQ', sector:'Quantum', catalyst:'May 8', pMkt:0.30, active:false},
-    {ticker:'RGTI', name:'Rigetti Computing', sector:'Quantum', catalyst:'May 12', pMkt:0.28, active:false},
-    {ticker:'QUBT', name:'Quantum Computing', sector:'Quantum', catalyst:'May 13', pMkt:0.26, active:false},
-    // FINTECH
-    {ticker:'COIN', name:'Coinbase', sector:'Fintech', catalyst:'May 8', pMkt:0.47, active:false},
-    {ticker:'SQ',   name:'Block Inc', sector:'Fintech', catalyst:'May 8', pMkt:0.44, active:false},
-    {ticker:'AFRM', name:'Affirm', sector:'Fintech', catalyst:'May 8', pMkt:0.41, active:false},
-    {ticker:'HOOD', name:'Robinhood', sector:'Fintech', catalyst:'May 8', pMkt:0.43, active:false},
-    {ticker:'SOFI', name:'SoFi Technologies', sector:'Fintech', catalyst:'May 1', pMkt:0.39, active:false},
-    {ticker:'NU',   name:'Nu Holdings', sector:'Fintech', catalyst:'May 13', pMkt:0.52, active:false},
-    {ticker:'PYPL', name:'PayPal', sector:'Fintech', catalyst:'Apr 29', pMkt:0.50, active:false},
-    // CONSUMER AND RETAIL
-    {ticker:'AMZN', name:'Amazon Retail', sector:'Consumer', catalyst:'Jul 31', pMkt:0.56, active:false},
-    {ticker:'WMT',  name:'Walmart', sector:'Consumer', catalyst:'May 21', pMkt:0.55, active:false},
-    {ticker:'COST', name:'Costco', sector:'Consumer', catalyst:'Jun 26', pMkt:0.56, active:false},
-    {ticker:'TGT',  name:'Target', sector:'Consumer', catalyst:'May 21', pMkt:0.43, active:false},
-    {ticker:'NKE',  name:'Nike', sector:'Consumer', catalyst:'Jun 26', pMkt:0.45, active:false},
-    {ticker:'LULU', name:'Lululemon', sector:'Consumer', catalyst:'Jun 4', pMkt:0.48, active:false},
-    // EV AND CLEAN TECH
-    {ticker:'TSLA', name:'Tesla', sector:'EV', catalyst:'Jul 23', pMkt:0.50, active:false},
-    {ticker:'RIVN', name:'Rivian', sector:'EV', catalyst:'May 6', pMkt:0.35, active:false},
-    {ticker:'LCID', name:'Lucid Motors', sector:'EV', catalyst:'May 6', pMkt:0.28, active:false},
-    {ticker:'CHPT', name:'ChargePoint', sector:'EV', catalyst:'Jun 5', pMkt:0.29, active:false},
-    {ticker:'ENPH', name:'Enphase Energy', sector:'Clean Tech', catalyst:'Apr 22', pMkt:0.40, active:false},
-    {ticker:'FSLR', name:'First Solar', sector:'Clean Tech', catalyst:'May 7', pMkt:0.50, active:false},
-    // UK AND EUROPE
-    {ticker:'RR',   name:'Rolls-Royce', sector:'UK', catalyst:'Jul 30', pMkt:0.58, active:true},
-    {ticker:'FTC',  name:'Filtronic', sector:'UK', catalyst:'Q3', pMkt:0.38, active:false},
-    {ticker:'PHE',  name:'Powerhouse Energy', sector:'UK', catalyst:'Q3', pMkt:0.25, active:false},
-    {ticker:'BP',   name:'BP plc', sector:'UK', catalyst:'Aug 5', pMkt:0.42, active:false},
-    {ticker:'SHEL', name:'Shell', sector:'UK', catalyst:'May 2', pMkt:0.48, active:false},
-    {ticker:'GSK',  name:'GSK plc', sector:'UK', catalyst:'Jul 30', pMkt:0.51, active:false},
-    {ticker:'AZN',  name:'AstraZeneca', sector:'UK', catalyst:'May 12', pMkt:0.55, active:false},
-    {ticker:'BARC', name:'Barclays', sector:'UK', catalyst:'May 1', pMkt:0.50, active:false},
-    {ticker:'HSBA', name:'HSBC', sector:'UK', catalyst:'May 6', pMkt:0.52, active:false},
-    // AI REAL ESTATE
-    {ticker:'KRC',  name:'Kilroy Realty', sector:'AI Real Estate', catalyst:'Jul 30', pMkt:0.41, active:false},
-    {ticker:'EQIX', name:'Equinix', sector:'AI Real Estate', catalyst:'Apr 30', pMkt:0.53, active:false},
-    {ticker:'DLR',  name:'Digital Realty', sector:'AI Real Estate', catalyst:'Apr 24', pMkt:0.49, active:false},
-    {ticker:'DGXX', name:'Digi Power X', sector:'AI Real Estate', catalyst:'Q4', pMkt:0.32, active:false},
-    // SPECULATIVE AND HIGH BETA
-    {ticker:'AAOI', name:'Applied Optoelec', sector:'Speculative', catalyst:'--', pMkt:0.35, active:false},
-    {ticker:'MSTR', name:'MicroStrategy', sector:'Speculative', catalyst:'Apr 29', pMkt:0.44, active:false},
-    {ticker:'GME',  name:'GameStop', sector:'Speculative', catalyst:'Jun', pMkt:0.30, active:false},
-    {ticker:'AMC',  name:'AMC Networks', sector:'Speculative', catalyst:'May 8', pMkt:0.28, active:false},
-  ],
   scanResults: [],
+  livePrices: {},
+  apiAvailable: false,
   scanning: false
 };
 
 // ═══════════════════════════════════════════════════════
 // FORMULAS
 // ═══════════════════════════════════════════════════════
-
-function calcEdge(pModel, pMkt) { return pModel - pMkt; }
+function calcEdge(pM, pMkt) { return pM - pMkt; }
 function calcKelly(p, b) { return Math.max(0, (p * b - (1-p)) / b); }
-function calcFractionalKelly(k, alpha) { return Math.max(0, alpha * k); }
-function calcPositionSize(p, bankroll, alpha, maxExp) {
+function calcPositionSize(p) {
   var k = calcKelly(p, 1);
-  var fk = calcFractionalKelly(k, alpha);
-  return Math.min(fk * bankroll, maxExp * bankroll);
+  var fk = Math.max(0, state.alpha * k);
+  return Math.min(fk * state.bankroll, state.maxExp * state.bankroll);
 }
-function calcRSI(prices, period) {
-  if (!period) period = 14;
+function calcRSI(prices) {
+  var period = 14;
   if (prices.length < period + 1) return 50;
   var gains = 0, losses = 0;
   for (var i = 1; i <= period; i++) {
-    var diff = prices[i] - prices[i-1];
-    if (diff > 0) gains += diff; else losses -= diff;
+    var d = prices[i] - prices[i-1];
+    if (d > 0) gains += d; else losses -= d;
   }
-  var avgGain = gains / period, avgLoss = losses / period;
-  if (avgLoss === 0) return 100;
-  return 100 - 100 / (1 + avgGain / avgLoss);
+  var ag = gains/period, al = losses/period;
+  if (al === 0) return 100;
+  return 100 - 100 / (1 + ag/al);
 }
-function genPrices(base, n, vol, drift) {
-  if (!n) n = 60; if (!vol) vol = 0.025; if (!drift) drift = 0.001;
+function genPrices(base, n) {
   var prices = [base];
   for (var i = 1; i < n; i++) {
-    var change = (Math.random() - 0.5 + drift) * vol * 2;
-    prices.push(prices[i-1] * (1 + change));
+    prices.push(prices[i-1] * (1 + (Math.random() - 0.5) * 0.04));
   }
   return prices;
 }
@@ -820,221 +335,147 @@ function genModelProb(pMkt) {
 }
 
 // ═══════════════════════════════════════════════════════
-// LIVE PRICE FETCHING (uses Vercel serverless function)
+// LIVE PRICE FETCHING
 // ═══════════════════════════════════════════════════════
-
-var livePrices = {};
-
-async function fetchLivePrice(ticker) {
-  try {
-    var res = await fetch('/api/price?ticker=' + ticker);
-    if (!res.ok) return null;
-    var data = await res.json();
-    if (data.price) {
-      livePrices[ticker] = {
-        price: data.price,
-        change: data.changePercent || 0,
-        timestamp: Date.now()
-      };
-      return data.price;
-    }
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
-
-async function fetchAllLivePrices() {
-  var promises = state.watchlist.map(function(w) {
-    return fetchLivePrice(w.ticker);
+function fetchLivePrice(ticker) {
+  return new Promise(function(resolve) {
+    fetch('/api/price?ticker=' + ticker)
+      .then(function(res) { return res.ok ? res.json() : null; })
+      .then(function(data) {
+        if (data && data.price) {
+          state.livePrices[ticker] = { price: data.price, time: Date.now() };
+          resolve(data.price);
+        } else {
+          resolve(null);
+        }
+      })
+      .catch(function() { resolve(null); });
   });
-  await Promise.all(promises);
-  return livePrices;
 }
 
-function getLivePrice(ticker) {
-  if (livePrices[ticker]) {
-    var age = Date.now() - livePrices[ticker].timestamp;
-    if (age < 60000) return livePrices[ticker].price; // 60 second cache
+function fetchAllLivePrices() {
+  var promises = WATCHLIST.map(function(w) { return fetchLivePrice(w.t); });
+  return Promise.all(promises);
+}
+
+function getPrice(ticker) {
+  if (state.livePrices[ticker]) {
+    var age = Date.now() - state.livePrices[ticker].time;
+    if (age < 120000) return state.livePrices[ticker].price;
   }
-  return null;
+  var w = WATCHLIST.find(function(x) { return x.t === ticker; });
+  return w ? w.bp : 50;
 }
 
-// ═══════════════════════════════════════════════════════
-// REAL PRICE LOOKUP TABLE (fallback if API fails)
-// ═══════════════════════════════════════════════════════
-
-var PRICES = {
-  // AI Chips
-  NVDA:209, AMD:412, AVGO:1850, TSM:215, ASML:920, AMAT:198, MRVL:78, ARM:217,
-  QCOM:175, INTC:22, LRCX:780, KLAC:780, MPWR:520, ON:38, TXN:175, ADI:185,
-  MCHP:52, SWKS:65, ONTO:293, COHU:14,
-  // Memory
-  MU:757, SNDK:1388, WDC:52, STX:105,
-  // Big Tech
-  MSFT:415, GOOGL:195, META:720, AMZN:234, AAPL:232, BABA:142, TCEHY:55,
-  BIDU:88, JD:38, NFLX:1180, SPOT:680,
-  // AI Cloud
-  CRWV:132, SMCI:34, DELL:148, HPE:18, NTAP:118, PSTG:52, IOT:38, GTLB:62,
-  // AI Power
-  BE:285, VRT:340, CEG:358, OKLO:92, NRG:38, VST:165, PCG:18, NEE:72,
-  AES:12, GEV:380, ETR:68,
-  // AI Software
-  PLTR:165, AI:28, BBAI:3, SOUN:18, PATH:14, AMBA:58, CPNG:28, APP:380, TTD:88,
-  // Cloud SaaS
-  CRM:298, NOW:1080, SNOW:178, DDOG:184, NET:178, HUBS:820, ZS:195,
-  VEEV:225, MDB:242, BILL:58, DOCN:38, TWLO:68, ZM:62, ADBE:388, INTU:698, WDAY:268,
-  // Cybersec
-  PANW:195, CRWD:478, FTNT:105, S:22, CSCO:64, OKTA:92, RPD:28, TENB:42,
-  // Growth
-  HIMS:29, ONON:35, CELH:28, DUOL:380, CAVA:118, PINS:32, SNAP:8, RDDT:148,
-  UBER:88, LYFT:15, ABNB:148, DASH:178, RBLX:42, U:22,
-  // S&P 500 Finance
-  JPM:268, BAC:42, WFC:68, GS:618, MS:128, BLK:1080, AXP:298, V:348, MA:568,
-  BRK:538, APO:188, KKR:148, BX:188, SCHW:88,
-  // S&P 500 Healthcare
-  LLY:978, NVO:68, JNJ:158, UNH:298, ABBV:188, MRK:88, PFE:28, TMO:528,
-  DHR:218, ISRG:578, REGN:698, GILD:88, VRTX:518, MRNA:38, BSX:98, ELV:348,
-  // S&P 500 Industrials
-  GE:218, CAT:368, HON:218, RTX:138, LMT:478, NOC:548, BA:188, DE:398,
-  UPS:98, FDX:248, MMM:148, EMR:118, ITW:258,
-  // S&P 500 Consumer
-  WMT:98, COST:978, TGT:98, NKE:68, LULU:268, SBUX:88, MCD:298, PG:168,
-  KO:68, PEP:138, PM:158, MO:58, CL:88, EL:68,
-  // S&P 500 Energy
-  XOM:118, CVX:158, COP:98, OXY:48, SLB:38, HAL:28, EOG:128,
-  // S&P 500 Materials
-  LIN:468, APD:298, FCX:48, NEM:58, ALB:203, DD:78,
-  // Biotech
-  RXRX:8, NVAX:7, BMRN:88, ALNY:248, IONS:38, BEAM:18, CRSP:38, NTLA:12,
-  CELC:28, RYTM:28,
-  // Quantum
-  QBTS:24, IONQ:32, RGTI:12, QUBT:8, ARQQ:5,
-  // Fintech
-  COIN:248, SQ:68, AFRM:48, HOOD:28, SOFI:12, NU:14, PYPL:68, SMAR:28, FIS:88,
-  // EV and Clean Tech
-  TSLA:298, RIVN:12, LCID:4, CHPT:2, ENPH:62, FSLR:188, SEDG:18, PLUG:2,
-  // AI Real Estate
-  KRC:33, EQIX:878, DLR:158, DGXX:5, IRM:118, CCI:98, AMT:198,
-  // UK FTSE
-  RR:1198, AZN:78, SHEL:28, GSK:18, BP:4, HSBA:9, BARC:3, LLOY:1,
-  NWG:4, STAN:8, VOD:1, BT:2, NG:11, SSE:18, SGE:14, AUTO:8, EXPN:38,
-  REL:38, DGE:22, ULVR:42, RIO:48, AAL:9, GLEN:4, BA:14, IMB:28, BATS:28,
-  CPG:28, INF:8, WPP:8, PSON:8, LAND:6, BLND:4, PRU:12, LGEN:2, SXNX:10,
-  // UK AIM
-  FTC:3, PHE:0.4, CWR:0.8, AFC:0.5, ITM:0.6, BOO:0.3, ASOS:4, MONY:3,
-  FEVR:8, HYD:0.2, HARL:0.3, NANO:0.1, TRMR:2,
-  // Speculative
-  AAOI:146, MSTR:398, GME:28, SPCE:0.5, NKLA:0.2
-};
-
-function getBasePrice(ticker) {
-  var live = getLivePrice(ticker);
-  if (live) return live;
-  return PRICES[ticker] || 50;
+function isLive(ticker) {
+  return state.livePrices[ticker] && (Date.now() - state.livePrices[ticker].time < 120000);
 }
 
 // ═══════════════════════════════════════════════════════
 // SIGNAL LOGIC
 // ═══════════════════════════════════════════════════════
-
-function getSignalData(wl) {
-  var basePrice = getBasePrice(wl.ticker);
-  var prices = genPrices(basePrice, 60, wl.sigma || 0.025, 0.001);
+function getSignalData(w) {
+  var basePrice = getPrice(w.t);
+  var prices = genPrices(basePrice, 60);
+  var lastPrice = isLive(w.t) ? basePrice : prices[prices.length-1];
   var rsi = calcRSI(prices);
   var ema50 = prices.slice(-50).reduce(function(a,b){return a+b;},0) / 50;
-  var lastPrice = prices[prices.length-1];
   var trendBull = lastPrice > ema50;
   var volSpike = Math.random() > 0.5;
-  var rsiOK = rsi < 45;
-  var sigCount = (rsiOK?1:0) + (trendBull?1:0) + (volSpike?1:0);
-  var pModel = wl.pModel || genModelProb(wl.pMkt);
-  var edge = calcEdge(pModel, wl.pMkt);
+  var sigCount = (rsi<45?1:0) + (trendBull?1:0) + (volSpike?1:0);
+  var pModel = w.pModel || genModelProb(w.pM);
+  w.pModel = pModel;
+  var edge = calcEdge(pModel, w.pM);
   var hasEdge = edge > 0.04;
   var signal = hasEdge && sigCount >= 2 ? 'STRONG BUY' : hasEdge ? 'BUY' : edge < -0.04 ? 'AVOID' : 'NEUTRAL';
-  var signalStrength = signal === 'STRONG BUY' ? 5 : signal === 'BUY' ? 3 : signal === 'AVOID' ? 0 : 1;
-  var signalColor = signal === 'STRONG BUY' ? '#00ff88' : signal === 'BUY' ? '#ffd700' : signal === 'AVOID' ? '#ff4d4d' : '#5a7080';
-  var posSize = calcPositionSize(pModel, state.bankroll, state.alpha, state.maxExp);
-  var stopLoss = lastPrice * 0.93;
-  var takeProfit = lastPrice * 1.15;
-  return { prices:prices, rsi:rsi, ema50:ema50, lastPrice:lastPrice, trendBull:trendBull, volSpike:volSpike, sigCount:sigCount, pModel:pModel, edge:edge, signal:signal, signalStrength:signalStrength, signalColor:signalColor, posSize:posSize, stopLoss:stopLoss, takeProfit:takeProfit };
+  var color = signal === 'STRONG BUY' ? '#00ff88' : signal === 'BUY' ? '#ffd700' : signal === 'AVOID' ? '#ff4d4d' : '#5a7080';
+  var posSize = calcPositionSize(pModel);
+  return {
+    prices: prices, rsi: rsi, lastPrice: lastPrice, trendBull: trendBull,
+    volSpike: volSpike, sigCount: sigCount, pModel: pModel, edge: edge,
+    signal: signal, color: color, posSize: posSize,
+    stopLoss: lastPrice * 0.93, takeProfit: lastPrice * 1.15,
+    isLive: isLive(w.t)
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+// LIVE BANNER
+// ═══════════════════════════════════════════════════════
+function updateLiveBanner() {
+  var banner = document.getElementById('liveBanner');
+  var liveCount = Object.keys(state.livePrices).length;
+  if (liveCount > 0) {
+    banner.className = 'live-banner';
+    banner.textContent = 'LIVE DATA ACTIVE - ' + liveCount + ' tickers loaded';
+    state.apiAvailable = true;
+  } else {
+    banner.className = 'live-banner offline';
+    banner.textContent = 'SIMULATED DATA - Run scan to fetch live prices';
+  }
 }
 
 // ═══════════════════════════════════════════════════════
 // SCANNER
 // ═══════════════════════════════════════════════════════
-
-var scanInterval;
-async function runScan() {
-  if (state.scanning) return;
-  state.scanning = true;
-  document.getElementById('scanBtn').disabled = true;
-  document.getElementById('scanBtn').textContent = 'FETCHING LIVE...';
-  document.getElementById('scanLog').innerHTML = '';
-  state.scanResults = [];
-  state.watchlist.forEach(function(w) { w.pModel = null; w.scanned = false; });
-  renderScanTable();
-
-  appendLog('Fetching live prices from API...', 'log-muted');
-  try {
-    await fetchAllLivePrices();
-  } catch (e) {
-    appendLog('API offline - using simulated prices', 'log-red');
-  }
-  var liveCount = Object.keys(livePrices).length;
-  appendLog('Live prices loaded: ' + liveCount + ' tickers', liveCount > 0 ? 'log-green' : 'log-red');
-
-  document.getElementById('scanBtn').textContent = 'SCANNING...';
-
-  var logs = [
-    {text:'Initialising agent swarm...', cls:'log-muted'},
-    {text:'Connecting to market feeds...', cls:'log-muted'},
-    {text:'Loading Twitter and Reddit sentiment...', cls:'log-muted'},
-    {text:'Running XGBoost probability models...', cls:'log-muted'},
-    {text:'Cross-referencing technical signals...', cls:'log-muted'},
-  ];
-  var li = 0;
-  function nextLog() {
-    if (li < logs.length) {
-      appendLog(logs[li].text, logs[li].cls);
-      li++;
-      setTimeout(nextLog, 380);
-    } else {
-      scanTickers(0);
-    }
-  }
-  nextLog();
-}
-
-function scanTickers(i) {
-  if (i >= state.watchlist.length) {
-    var count = state.watchlist.filter(function(w){return w.scanned && calcEdge(w.pModel,w.pMkt)>0.04;}).length;
-    appendLog('Scan complete -- ' + count + ' opportunities found', 'log-green');
-    document.getElementById('scanStatus').textContent = count + ' edge opportunities found';
-    document.getElementById('scanBtn').disabled = false;
-    document.getElementById('scanBtn').textContent = 'RUN SCAN';
-    state.scanning = false;
-    return;
-  }
-  var w = state.watchlist[i];
-  w.pModel = genModelProb(w.pMkt);
-  w.scanned = true;
-  var edge = calcEdge(w.pModel, w.pMkt);
-  var status = edge > 0.04 ? 'EDGE' : edge < -0.04 ? 'SKIP' : 'WAIT';
-  var cls = edge > 0.04 ? 'log-green' : edge < -0.04 ? 'log-red' : 'log-muted';
-  appendLog(status + ' ' + w.ticker + ': ' + (edge > 0 ? '+' : '') + (edge*100).toFixed(1) + '%', cls);
-  renderScanTable();
-  setTimeout(function(){scanTickers(i+1);}, 250);
-}
-
-function appendLog(text, cls) {
+function appendLog(text, color) {
   var log = document.getElementById('scanLog');
-  var span = document.createElement('span');
-  span.className = 'log-line ' + (cls||'log-muted');
+  if (log.firstChild && log.firstChild.textContent === 'Awaiting scan...') log.innerHTML = '';
+  var span = document.createElement('div');
+  span.style.color = color || '#5a7080';
   var num = log.children.length + 1;
   span.textContent = String(num).padStart(2,'0') + '  ' + text;
   log.appendChild(span);
   log.scrollTop = log.scrollHeight;
+}
+
+function runScan() {
+  if (state.scanning) return;
+  state.scanning = true;
+  var btn = document.getElementById('scanBtn');
+  btn.disabled = true;
+  btn.textContent = 'FETCHING...';
+  document.getElementById('scanLog').innerHTML = '';
+  WATCHLIST.forEach(function(w) { w.pModel = null; w.scanned = false; });
+  renderScanTable();
+
+  appendLog('Fetching live prices...', '#5a7080');
+
+  fetchAllLivePrices().then(function() {
+    var liveCount = Object.keys(state.livePrices).length;
+    if (liveCount > 0) {
+      appendLog('Live data loaded: ' + liveCount + ' prices', '#00ff88');
+    } else {
+      appendLog('API offline - using simulated prices', '#ffd700');
+    }
+    updateLiveBanner();
+    btn.textContent = 'SCANNING...';
+    appendLog('Running probability models...', '#5a7080');
+    appendLog('Cross-referencing technicals...', '#5a7080');
+    setTimeout(function() { scanNext(0); }, 200);
+  });
+}
+
+function scanNext(i) {
+  if (i >= WATCHLIST.length) {
+    var count = WATCHLIST.filter(function(w){return w.scanned && calcEdge(w.pModel, w.pM) > 0.04;}).length;
+    appendLog('Scan complete - ' + count + ' opportunities', '#00ff88');
+    document.getElementById('scanStatus').textContent = count + ' edge opportunities found';
+    var btn = document.getElementById('scanBtn');
+    btn.disabled = false;
+    btn.textContent = 'RUN SCAN';
+    state.scanning = false;
+    return;
+  }
+  var w = WATCHLIST[i];
+  w.pModel = genModelProb(w.pM);
+  w.scanned = true;
+  var edge = calcEdge(w.pModel, w.pM);
+  var status = edge > 0.04 ? 'EDGE' : edge < -0.04 ? 'SKIP' : 'WAIT';
+  var color = edge > 0.04 ? '#00ff88' : edge < -0.04 ? '#ff4d4d' : '#5a7080';
+  appendLog(status + ' ' + w.t + ': ' + (edge>0?'+':'') + (edge*100).toFixed(1) + '%', color);
+  renderScanTable();
+  setTimeout(function() { scanNext(i+1); }, 80);
 }
 
 function renderScanTable() {
@@ -1043,172 +484,107 @@ function renderScanTable() {
   var sigFilter = document.getElementById('signalFilter').value;
   var body = document.getElementById('scanBody');
   body.innerHTML = '';
-  state.watchlist.forEach(function(w) {
-    if (search && w.ticker.toLowerCase().indexOf(search) < 0 && w.name.toLowerCase().indexOf(search) < 0) return;
-    if (sector && w.sector !== sector) return;
-    var sd = w.scanned ? getQuickSignal(w) : null;
-    if (sigFilter && (!sd || sd.signal !== sigFilter)) return;
+  WATCHLIST.forEach(function(w) {
+    if (search && w.t.toLowerCase().indexOf(search) < 0 && w.n.toLowerCase().indexOf(search) < 0) return;
+    if (sector && w.s !== sector) return;
+    var price = getPrice(w.t);
+    var live = isLive(w.t);
+    var rsi = 35 + Math.random()*40;
+    var trendBull = Math.random()>0.4;
+    var volSpike = Math.random()>0.5;
+    var sigCount = (rsi<45?1:0)+(trendBull?1:0)+(volSpike?1:0);
+    var edge = w.scanned ? calcEdge(w.pModel, w.pM) : 0;
+    var hasEdge = w.scanned && edge > 0.04;
+    var sig = hasEdge && sigCount >= 2 ? 'STRONG BUY' : hasEdge ? 'BUY' : w.scanned && edge < -0.04 ? 'AVOID' : w.scanned ? 'NEUTRAL' : '';
+    if (sigFilter && sig !== sigFilter) return;
     var tr = document.createElement('tr');
-    tr.onclick = function() { document.getElementById('tickerInput').value = w.ticker; showTab('signal'); analyseSignal(); };
-    var edgeStr = w.scanned ? ((w.pModel - w.pMkt > 0 ? '+' : '') + ((w.pModel - w.pMkt)*100).toFixed(1) + '%') : '--';
-    var edgeCol = !w.scanned ? '#5a7080' : w.pModel - w.pMkt > 0.04 ? '#00ff88' : w.pModel - w.pMkt < -0.04 ? '#ff4d4d' : '#ffd700';
-    var sigBadge = sd ? ('<span class="badge badge-' + (sd.signal==='STRONG BUY'?'green':sd.signal==='BUY'?'gold':sd.signal==='AVOID'?'red':'gray') + '">' + sd.signal + '</span>') : '--';
-    var rsiVal = sd ? sd.rsi.toFixed(0) : '--';
-    var rsiCol = sd ? (sd.rsi < 40 ? '#00ff88' : sd.rsi > 70 ? '#ff4d4d' : '#8b949e') : '#5a7080';
-    var trendStr = sd ? (sd.trendBull ? '<span style="color:#00ff88">UP</span>' : '<span style="color:#ff4d4d">DOWN</span>') : '--';
-    tr.innerHTML = '<td style="font-weight:800;color:#fff">' + w.ticker + '</td>' +
-      '<td style="color:#5a7080;font-size:10px">' + w.sector + '</td>' +
-      '<td style="color:#ffd700;font-size:10px">' + w.catalyst + '</td>' +
-      '<td style="color:#8b949e">' + (w.pMkt*100).toFixed(0) + '%</td>' +
-      '<td style="color:#00ff88">' + (w.scanned ? (w.pModel*100).toFixed(0)+'%' : '--') + '</td>' +
-      '<td style="color:' + edgeCol + ';font-weight:700">' + edgeStr + '</td>' +
-      '<td style="color:' + rsiCol + '">' + rsiVal + '</td>' +
-      '<td>' + trendStr + '</td>' +
-      '<td>' + sigBadge + '</td>';
+    tr.dataset.ticker = w.t;
+    var edgeStr = w.scanned ? ((edge>0?'+':'')+(edge*100).toFixed(1)+'%') : '--';
+    var edgeCol = !w.scanned ? '#5a7080' : edge > 0.04 ? '#00ff88' : edge < -0.04 ? '#ff4d4d' : '#ffd700';
+    var sigBadge = sig ? '<span class="badge badge-' + (sig==='STRONG BUY'?'green':sig==='BUY'?'gold':sig==='AVOID'?'red':'gray') + '">'+sig+'</span>' : '--';
+    var priceStr = (live ? '$' : '~$') + price.toFixed(2);
+    var priceCol = live ? '#00ff88' : '#8b949e';
+    tr.innerHTML = '<td style="font-weight:800;color:#fff">'+w.t+'</td>'+
+      '<td style="color:'+priceCol+'">'+priceStr+'</td>'+
+      '<td style="color:#5a7080;font-size:10px">'+w.s+'</td>'+
+      '<td style="color:#ffd700;font-size:10px">'+w.c+'</td>'+
+      '<td style="color:'+edgeCol+';font-weight:700">'+edgeStr+'</td>'+
+      '<td style="color:#8b949e">'+rsi.toFixed(0)+'</td>'+
+      '<td style="color:'+(trendBull?'#00ff88':'#ff4d4d')+'">'+(trendBull?'UP':'DOWN')+'</td>'+
+      '<td>'+sigBadge+'</td>';
     body.appendChild(tr);
   });
 }
 
-function getQuickSignal(w) {
-  var pModel = w.pModel || genModelProb(w.pMkt);
-  var edge = calcEdge(pModel, w.pMkt);
-  var rsi = 35 + Math.random() * 40;
-  var trendBull = Math.random() > 0.4;
-  var volSpike = Math.random() > 0.5;
-  var sigCount = (rsi<45?1:0) + (trendBull?1:0) + (volSpike?1:0);
-  var signal = edge > 0.08 && sigCount >= 2 ? 'STRONG BUY' : edge > 0.04 ? 'BUY' : edge < -0.04 ? 'AVOID' : 'NEUTRAL';
-  return { rsi:rsi, trendBull:trendBull, signal:signal };
-}
-
-function filterTable() { renderScanTable(); }
-
 // ═══════════════════════════════════════════════════════
-// SIGNAL ANALYSER
+// SIGNAL ANALYSIS
 // ═══════════════════════════════════════════════════════
-
-async function analyseSignal() {
+function analyseSignal() {
   var ticker = document.getElementById('tickerInput').value.toUpperCase().trim();
   if (!ticker) return;
-  var btn = document.querySelector('#tab-signal .btn-green');
-  if (btn) { btn.disabled = true; btn.textContent = 'FETCHING LIVE...'; }
-  try {
-    await fetchLivePrice(ticker);
-  } catch (e) {}
-  if (btn) { btn.disabled = false; btn.textContent = 'ANALYSE'; }
-  var wl = state.watchlist.find(function(w){return w.ticker===ticker;});
-  if (!wl) {
-    wl = {ticker:ticker, name:ticker, sector:'Custom', catalyst:'--', pMkt:0.50};
-  }
-  var sd = getSignalData(wl);
-  var signalBorderColor = sd.signalColor;
+  var btn = document.getElementById('analyseBtn');
+  btn.disabled = true;
+  btn.textContent = 'FETCHING...';
+  fetchLivePrice(ticker).then(function() {
+    btn.disabled = false;
+    btn.textContent = 'ANALYSE';
+    updateLiveBanner();
+    renderSignal(ticker);
+  });
+}
 
+function renderSignal(ticker) {
+  var w = WATCHLIST.find(function(x){return x.t === ticker;});
+  if (!w) w = {t:ticker, n:ticker, s:'Custom', c:'--', pM:0.50, bp:50};
+  var sd = getSignalData(w);
   var html = '';
-
-  // Live data indicator
-  var isLive = livePrices[ticker] && (Date.now() - livePrices[ticker].timestamp < 60000);
-  if (isLive) {
-    html += '<div style="background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.25);border-radius:6px;padding:8px 14px;margin-bottom:12px;font-size:11px;color:#00ff88;text-align:center;">LIVE DATA - Price $' + sd.lastPrice.toFixed(2) + ' fetched ' + Math.floor((Date.now() - livePrices[ticker].timestamp)/1000) + 's ago</div>';
+  if (sd.isLive) {
+    html += '<div style="background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.25);border-radius:6px;padding:8px 14px;margin-bottom:12px;font-size:11px;color:#00ff88;text-align:center;">LIVE DATA - $'+sd.lastPrice.toFixed(2)+'</div>';
   } else {
-    html += '<div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:6px;padding:8px 14px;margin-bottom:12px;font-size:11px;color:#ffd700;text-align:center;">SIMULATED DATA - API offline or ticker not available</div>';
+    html += '<div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:6px;padding:8px 14px;margin-bottom:12px;font-size:11px;color:#ffd700;text-align:center;">SIMULATED PRICE - approximate $'+sd.lastPrice.toFixed(2)+'</div>';
   }
-
-  // Signal banner
-  html += '<div class="signal-banner" style="background:' + sd.signalColor + '10;border:1px solid ' + sd.signalColor + '40">';
-  html += sigCell('SIGNAL', sd.signal, sd.signalColor);
-  html += sigCell('EDGE', (sd.edge>0?'+':'') + (sd.edge*100).toFixed(1) + '%', sd.signalColor);
-  html += sigCell('KELLY SIZE', 'GBP' + sd.posSize.toFixed(0), '#ffd700');
-  html += sigCell('P(MODEL)', (sd.pModel*100).toFixed(0) + '%', '#00ff88');
-  html += sigCell('P(MARKET)', (wl.pMkt*100).toFixed(0) + '%', '#8b949e');
-  html += sigCell('CATALYST', wl.catalyst || '--', '#ffd700');
+  html += '<div class="signal-banner" style="background:'+sd.color+'10;border:1px solid '+sd.color+'40">';
+  html += '<div class="signal-cell"><div class="lbl">SIGNAL</div><div class="val" style="color:'+sd.color+'">'+sd.signal+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">EDGE</div><div class="val" style="color:'+sd.color+'">'+(sd.edge>0?'+':'')+(sd.edge*100).toFixed(1)+'%</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">KELLY SIZE</div><div class="val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</div></div>';
+  html += '<div class="signal-cell"><div class="lbl">CATALYST</div><div class="val" style="color:#ffd700;font-size:14px">'+w.c+'</div></div>';
   html += '</div>';
-
-  // Technicals
-  html += '<div class="card">';
-  html += '<div class="card-header">TECHNICAL INDICATORS</div>';
-  html += '<div class="grid-auto">';
-  html += metricCard('RSI(14)', sd.rsi.toFixed(1), sd.rsi < 40 ? 'Oversold' : sd.rsi > 70 ? 'Overbought' : 'Neutral', sd.rsi < 40 ? '#00ff88' : sd.rsi > 70 ? '#ff4d4d' : '#ffd700');
-  html += metricCard('TREND', sd.trendBull ? 'BULLISH' : 'BEARISH', 'vs EMA 50', sd.trendBull ? '#00ff88' : '#ff4d4d');
-  html += metricCard('VOLUME', sd.volSpike ? 'SPIKE' : 'Normal', sd.volSpike ? '1.5x avg' : 'Below avg', sd.volSpike ? '#ffd700' : '#5a7080');
-  html += metricCard('SIGNALS', sd.sigCount + '/3', sd.sigCount >= 2 ? 'Entry confirmed' : 'Need 2+', sd.sigCount >= 2 ? '#00ff88' : '#5a7080');
+  html += '<div class="card"><div class="card-header">TECHNICAL INDICATORS</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;">';
+  html += metricBox('RSI(14)', sd.rsi.toFixed(1), sd.rsi < 40 ? 'Oversold' : sd.rsi > 70 ? 'Overbought' : 'Neutral', sd.rsi < 40 ? '#00ff88' : sd.rsi > 70 ? '#ff4d4d' : '#ffd700');
+  html += metricBox('TREND', sd.trendBull ? 'BULLISH' : 'BEARISH', 'vs EMA 50', sd.trendBull ? '#00ff88' : '#ff4d4d');
+  html += metricBox('VOLUME', sd.volSpike ? 'SPIKE' : 'Normal', sd.volSpike ? '1.5x avg' : 'Below avg', sd.volSpike ? '#ffd700' : '#5a7080');
+  html += metricBox('SIGNALS', sd.sigCount + '/3', sd.sigCount >= 2 ? 'Confirmed' : 'Need 2+', sd.sigCount >= 2 ? '#00ff88' : '#5a7080');
   html += '</div></div>';
-
-  // Chart
-  html += '<div class="chart-wrap">';
-  html += '<div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:10px;">60-DAY PRICE SIMULATION</div>';
-  html += renderMiniChart(sd.prices);
-  html += '</div>';
-
-  // Trade setup
   html += '<div class="trade-setup">';
   html += '<div style="font-size:11px;color:#00ff88;letter-spacing:1px;font-weight:700;margin-bottom:12px;">TRADE SETUP</div>';
   html += '<div class="trade-cells">';
-  html += tradeCell('ENTRY', '$' + sd.lastPrice.toFixed(2), '#fff');
-  html += tradeCell('STOP LOSS', '$' + sd.stopLoss.toFixed(2), '#ff4d4d');
-  html += tradeCell('TARGET', '$' + sd.takeProfit.toFixed(2), '#00ff88');
-  html += tradeCell('SIZE', 'GBP' + sd.posSize.toFixed(0), '#ffd700');
-  html += tradeCell('R:R', '1:2', '#fff');
+  html += '<div class="trade-cell"><span class="tc-lbl">ENTRY</span><span class="tc-val" style="color:#fff">$'+sd.lastPrice.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">STOP LOSS</span><span class="tc-val" style="color:#ff4d4d">$'+sd.stopLoss.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">TARGET</span><span class="tc-val" style="color:#00ff88">$'+sd.takeProfit.toFixed(2)+'</span></div>';
+  html += '<div class="trade-cell"><span class="tc-lbl">SIZE</span><span class="tc-val" style="color:#ffd700">£'+sd.posSize.toFixed(0)+'</span></div>';
   html += '</div>';
-  html += '<div class="t212-box">Open Trading 212 ISA -- Search ' + ticker + ' -- Buy -- Enter GBP' + sd.posSize.toFixed(0) + ' -- Stop Loss at $' + sd.stopLoss.toFixed(2) + ' -- Target $' + sd.takeProfit.toFixed(2) + '</div>';
-
-  if (sd.signalStrength >= 3) {
-    html += '<div style="margin-top:12px;text-align:center">';
-    html += '<button class="btn btn-green" onclick="executeTrade(\'' + ticker + '\',' + sd.posSize.toFixed(0) + ',' + sd.stopLoss.toFixed(2) + ',' + sd.takeProfit.toFixed(2) + ',' + sd.edge.toFixed(4) + ')">EXECUTE -- LOG THIS TRADE</button>';
-    html += '</div>';
+  html += '<div class="t212-box">Trading 212 ISA: Search '+ticker+' -> Buy -> £'+sd.posSize.toFixed(0)+' -> Stop $'+sd.stopLoss.toFixed(2)+' -> Target $'+sd.takeProfit.toFixed(2)+'</div>';
+  if (sd.signal === 'STRONG BUY' || sd.signal === 'BUY') {
+    html += '<div style="margin-top:12px;text-align:center"><button class="btn btn-green" onclick="executeTrade(\''+ticker+'\','+sd.posSize.toFixed(0)+','+sd.stopLoss.toFixed(2)+','+sd.takeProfit.toFixed(2)+','+sd.edge.toFixed(4)+')">EXECUTE TRADE</button></div>';
   }
   html += '</div>';
-
   document.getElementById('signalContent').innerHTML = html;
 }
 
-function sigCell(lbl, val, color) {
-  return '<div class="signal-cell"><div class="lbl">' + lbl + '</div><div class="val" style="color:' + color + '">' + val + '</div></div>';
-}
-function metricCard(lbl, val, sub, color) {
-  return '<div class="metric"><div class="lbl">' + lbl + '</div><div class="val" style="color:' + color + '">' + val + '</div><div class="sub">' + sub + '</div></div>';
-}
-function tradeCell(lbl, val, color) {
-  return '<div class="trade-cell"><span class="tc-lbl">' + lbl + '</span><span class="tc-val" style="color:' + color + '">' + val + '</span></div>';
-}
-
-// ═══════════════════════════════════════════════════════
-// MINI CHART
-// ═══════════════════════════════════════════════════════
-
-function renderMiniChart(prices) {
-  var W = 600, H = 120, pl = 8, pr = 8, pt = 10, pb = 20;
-  var cW = W - pl - pr, cH = H - pt - pb;
-  var min = Math.min.apply(null, prices) * 0.995;
-  var max = Math.max.apply(null, prices) * 1.005;
-  var isUp = prices[prices.length-1] >= prices[0];
-  var col = isUp ? '#00ff88' : '#ff4d4d';
-  var pts = prices.map(function(p,i){
-    var x = pl + (i/(prices.length-1)) * cW;
-    var y = pt + ((max-p)/(max-min)) * cH;
-    return x + ',' + y;
-  }).join(' ');
-  var fillPts = pl + ',' + (H-pb) + ' ' + pts + ' ' + (W-pr) + ',' + (H-pb);
-  return '<svg width="100%" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" style="display:block">' +
-    '<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + col + '" stop-opacity="0.3"/><stop offset="100%" stop-color="' + col + '" stop-opacity="0"/></linearGradient></defs>' +
-    '<polygon points="' + fillPts + '" fill="url(#cg)"/>' +
-    '<polyline points="' + pts + '" fill="none" stroke="' + col + '" stroke-width="2"/>' +
-    '</svg>';
+function metricBox(lbl, val, sub, color) {
+  return '<div class="metric"><div class="lbl">'+lbl+'</div><div class="val" style="color:'+color+'">'+val+'</div><div class="sub">'+sub+'</div></div>';
 }
 
 // ═══════════════════════════════════════════════════════
 // TRADES
 // ═══════════════════════════════════════════════════════
-
 function executeTrade(ticker, size, sl, tp, edge) {
   state.trades.unshift({
-    id: Date.now(),
-    ticker: ticker,
-    size: size,
-    stopLoss: sl,
-    takeProfit: tp,
-    edge: edge,
+    ticker: ticker, size: size, sl: sl, tp: tp, edge: edge,
     time: new Date().toLocaleTimeString()
   });
-  updateHeaderStats();
+  document.getElementById('hTrades').textContent = state.trades.length;
   renderTrades();
   showTab('trades');
 }
@@ -1216,46 +592,37 @@ function executeTrade(ticker, size, sl, tp, edge) {
 function renderTrades() {
   var el = document.getElementById('tradesContent');
   if (!state.trades.length) {
-    el.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:40px 0;">No trades yet</div>';
+    el.innerHTML = '<div style="color:#5a7080;font-size:13px;text-align:center;padding:40px 0;">No trades yet</div>';
     return;
   }
-  var html = '<div class="table-wrap"><table><thead><tr><th>Time</th><th>Ticker</th><th>Size</th><th>Stop Loss</th><th>Target</th><th>Edge</th></tr></thead><tbody>';
+  var html = '<div style="overflow-x:auto"><table><thead><tr><th>Time</th><th>Ticker</th><th>Size</th><th>Stop</th><th>Target</th><th>Edge</th></tr></thead><tbody>';
   state.trades.forEach(function(t) {
-    html += '<tr>';
-    html += '<td style="color:#5a7080">' + t.time + '</td>';
-    html += '<td style="font-weight:800;color:#fff">' + t.ticker + '</td>';
-    html += '<td style="color:#ffd700">GBP' + t.size + '</td>';
-    html += '<td style="color:#ff4d4d">$' + t.stopLoss + '</td>';
-    html += '<td style="color:#00ff88">$' + t.takeProfit + '</td>';
-    html += '<td style="color:#00ff88">' + (t.edge > 0 ? '+' : '') + (t.edge*100).toFixed(1) + '%</td>';
-    html += '</tr>';
+    html += '<tr><td style="color:#5a7080">'+t.time+'</td>'+
+      '<td style="font-weight:800;color:#fff">'+t.ticker+'</td>'+
+      '<td style="color:#ffd700">£'+t.size+'</td>'+
+      '<td style="color:#ff4d4d">$'+t.sl+'</td>'+
+      '<td style="color:#00ff88">$'+t.tp+'</td>'+
+      '<td style="color:#00ff88">+'+(t.edge*100).toFixed(1)+'%</td></tr>';
   });
   html += '</tbody></table></div>';
   el.innerHTML = html;
 }
 
-function clearTrades() {
-  state.trades = [];
-  updateHeaderStats();
-  renderTrades();
-}
-
 // ═══════════════════════════════════════════════════════
 // KELLY
 // ═══════════════════════════════════════════════════════
-
-function updateKelly(val, type) {
-  if (type === 'bankroll') {
-    state.bankroll = parseInt(val);
-    document.getElementById('bankrollLabel').textContent = 'Bankroll: GBP' + parseInt(val).toLocaleString();
-    document.getElementById('hBankroll').textContent = 'GBP' + parseInt(val).toLocaleString();
-  } else if (type === 'alpha') {
-    state.alpha = parseFloat(val);
-    document.getElementById('alphaLabel').textContent = 'Fractional Kelly Alpha: ' + parseFloat(val).toFixed(2);
-  } else if (type === 'maxexp') {
-    state.maxExp = parseInt(val) / 100;
-    document.getElementById('maxExpLabel').textContent = 'Max Exposure: ' + val + '%';
-  }
+function updateBankroll(val) {
+  state.bankroll = parseInt(val);
+  document.getElementById('bankrollLabel').textContent = 'Bankroll: £' + parseInt(val).toLocaleString();
+  document.getElementById('hBankroll').textContent = '£' + parseInt(val).toLocaleString();
+}
+function updateAlpha(val) {
+  state.alpha = parseFloat(val);
+  document.getElementById('alphaLabel').textContent = 'Fractional Kelly Alpha: ' + parseFloat(val).toFixed(2);
+}
+function updateMaxExp(val) {
+  state.maxExp = parseInt(val) / 100;
+  document.getElementById('maxExpLabel').textContent = 'Max Exposure: ' + val + '%';
 }
 
 function calcKellyLive() {
@@ -1263,148 +630,108 @@ function calcKellyLive() {
   var b = parseFloat(document.getElementById('kellyB').value);
   var el = document.getElementById('kellyResult');
   if (!p || !b || p <= 0 || p >= 1 || b <= 0) {
-    el.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;">Enter valid values</div>';
+    el.innerHTML = '<div style="color:#5a7080;font-size:12px;text-align:center;">Enter valid values</div>';
     return;
   }
-  var q = 1 - p;
-  var kelly = (p * b - q) / b;
+  var kelly = (p * b - (1-p)) / b;
   var fracKelly = state.alpha * kelly;
   var posSize = Math.min(Math.max(0, fracKelly) * state.bankroll, state.maxExp * state.bankroll);
-  var ev = p * b - q;
-  var rr = b;
   var color = kelly > 0 ? '#00ff88' : '#ff4d4d';
-  el.innerHTML =
-    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">' +
-    metricCard('FULL KELLY', (kelly*100).toFixed(1)+'%', 'of bankroll', color) +
-    metricCard('FRAC KELLY', (fracKelly*100).toFixed(1)+'%', 'alpha ' + state.alpha) +
-    metricCard('POSITION', 'GBP'+posSize.toFixed(0), 'to invest', '#ffd700') +
-    metricCard('EV', ev.toFixed(3), ev>0?'Positive edge':'Negative edge', ev>0?'#00ff88':'#ff4d4d') +
-    metricCard('WIN PROB', (p*100).toFixed(0)+'%', 'input', '#00bfff') +
-    metricCard('R:R', '1:'+b.toFixed(1), 'reward ratio', '#8b949e') +
+  el.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">'+
+    metricBox('FULL KELLY', (kelly*100).toFixed(1)+'%', 'of bankroll', color)+
+    metricBox('FRAC KELLY', (fracKelly*100).toFixed(1)+'%', 'alpha '+state.alpha)+
+    metricBox('POSITION', '£'+posSize.toFixed(0), 'to invest', '#ffd700')+
     '</div>';
 }
 
 // ═══════════════════════════════════════════════════════
 // WATCHLIST
 // ═══════════════════════════════════════════════════════
-
 function renderWatchlist() {
   var el = document.getElementById('watchlistContent');
   var html = '';
-  state.watchlist.forEach(function(w, i) {
-    var activeCol = w.active ? '#00ff88' : '#5a7080';
-    var borderCol = w.active ? 'rgba(0,255,136,0.25)' : '#1c2530';
-    html += '<div style="background:var(--card);border:1px solid ' + borderCol + ';border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;">';
-    html += '<div onclick="toggleWatchlist(' + i + ')" style="width:40px;height:22px;background:' + (w.active?'#00ff88':'#1c2530') + ';border-radius:11px;cursor:pointer;position:relative;flex-shrink:0;transition:all 0.2s">' +
-      '<div style="position:absolute;top:3px;left:' + (w.active?'21px':'3px') + ';width:16px;height:16px;background:#fff;border-radius:50%;transition:all 0.2s"></div></div>';
-    html += '<div style="flex:1">';
-    html += '<div style="font-size:16px;font-weight:800;color:' + (w.active?'#fff':'#5a7080') + '">' + w.ticker + ' <span style="font-size:12px;color:var(--muted);font-weight:400">' + w.name + '</span></div>';
-    html += '<div style="font-size:10px;color:var(--muted);margin-top:3px">' + w.sector + ' -- Catalyst: <span style="color:#ffd700">' + w.catalyst + '</span></div>';
-    html += '</div>';
-    html += '<button onclick="removeFromWatchlist(' + i + ')" style="background:none;border:none;color:#5a7080;cursor:pointer;font-size:16px;">x</button>';
-    html += '</div>';
+  WATCHLIST.forEach(function(w, i) {
+    html += '<div style="background:#0d1117;border:1px solid #1c2530;border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;">';
+    html += '<div style="flex:1"><div style="font-size:16px;font-weight:800;color:#fff">'+w.t+' <span style="font-size:12px;color:#5a7080;font-weight:400">'+w.n+'</span></div>';
+    html += '<div style="font-size:10px;color:#5a7080;margin-top:3px">'+w.s+' - Catalyst: <span style="color:#ffd700">'+w.c+'</span></div></div>';
+    html += '<button onclick="removeTicker('+i+')" style="background:none;border:none;color:#5a7080;cursor:pointer;font-size:16px;">x</button></div>';
   });
   el.innerHTML = html;
 }
 
-function toggleWatchlist(i) {
-  state.watchlist[i].active = !state.watchlist[i].active;
+function removeTicker(i) {
+  WATCHLIST.splice(i, 1);
   renderWatchlist();
 }
 
-function removeFromWatchlist(i) {
-  state.watchlist.splice(i, 1);
-  renderWatchlist();
-}
-
-function addToWatchlist() {
-  var ticker = document.getElementById('newTickerInput').value.toUpperCase().trim();
-  if (!ticker) return;
-  if (state.watchlist.find(function(w){return w.ticker===ticker;})) {
-    alert(ticker + ' is already in your watchlist');
+function addTicker() {
+  var t = document.getElementById('newTickerInput').value.toUpperCase().trim();
+  if (!t) return;
+  if (WATCHLIST.find(function(w){return w.t === t;})) {
+    alert(t + ' already in watchlist');
     return;
   }
-  state.watchlist.push({ticker:ticker, name:ticker, sector:'Custom', catalyst:'--', pMkt:0.50, active:true});
+  WATCHLIST.push({t:t, n:t, s:'Custom', c:'--', pM:0.50, bp:50});
   document.getElementById('newTickerInput').value = '';
   renderWatchlist();
 }
 
 // ═══════════════════════════════════════════════════════
-// T212 GUIDE
-// ═══════════════════════════════════════════════════════
-
-function renderGuide() {
-  var steps = [
-    {letter:'A', title:'Strong Buy alert fires', color:'#00ff88', items:['Open Trading 212 immediately', 'Make sure you are in ISA account not CFD', 'Search the ticker from the signal tab']},
-    {letter:'B', title:'Place the trade', color:'#ffd700', items:['Tap Trade then Buy', 'Switch to Value tab', 'Enter the Kelly size in GBP from the bot', 'Review the estimated shares']},
-    {letter:'C', title:'Set your stop loss', color:'#ff4d4d', items:['Tap Stop Loss toggle before confirming', 'Enter the stop loss price from the bot', 'This auto-sells if price drops -- never skip this']},
-    {letter:'D', title:'Set take profit', color:'#00bfff', items:['Tap Take Profit toggle', 'Enter the target price from the bot', 'T212 auto-sells when target is hit']},
-    {letter:'E', title:'Confirm and log', color:'#00ff88', items:['Tap Review Order then Confirm', 'Screenshot the confirmation', 'Go to Trades tab in the bot and log it']},
-  ];
-
-  var html = '';
-  steps.forEach(function(s) {
-    html += '<div style="display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border)">';
-    html += '<div style="width:32px;height:32px;background:' + s.color + '20;border:1px solid ' + s.color + '50;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:' + s.color + ';flex-shrink:0">' + s.letter + '</div>';
-    html += '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:8px">' + s.title + '</div>';
-    s.items.forEach(function(item) {
-      html += '<div style="font-size:12px;color:#8b949e;padding:3px 0;display:flex;gap:8px"><span style="color:' + s.color + '">--</span>' + item + '</div>';
-    });
-    html += '</div></div>';
-  });
-  document.getElementById('guideSteps').innerHTML = html;
-
-  var schedule = [
-    {day:'Monday', action:'HIMS earnings tonight -- Buy before 9pm UK -- Results 9pm UK', color:'#00ff88'},
-    {day:'Tuesday', action:'ONON earnings before open -- Check premarket 1pm UK -- NVDA watch begins', color:'#ffd700'},
-    {day:'Wednesday', action:'CSCO and BABA earnings -- Monitor NVDA build position', color:'#ffd700'},
-    {day:'Thursday', action:'AMAT earnings tonight -- Buy before 9pm UK', color:'#00ff88'},
-    {day:'Friday', action:'Review week -- Build NVDA position ahead of May 20th', color:'#00bfff'},
-    {day:'May 20th', action:'NVIDIA EARNINGS -- Biggest trade of the month', color:'#ff4d4d'},
-  ];
-
-  var shtml = '';
-  schedule.forEach(function(s) {
-    shtml += '<div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">';
-    shtml += '<div style="min-width:90px;font-size:12px;font-weight:700;color:' + s.color + '">' + s.day + '</div>';
-    shtml += '<div style="font-size:12px;color:#8b949e">' + s.action + '</div>';
-    shtml += '</div>';
-  });
-  document.getElementById('weekSchedule').innerHTML = shtml;
-}
-
-// ═══════════════════════════════════════════════════════
-// HEADER STATS
-// ═══════════════════════════════════════════════════════
-
-function updateHeaderStats() {
-  var totalExposure = state.trades.reduce(function(s,t){return s+t.size;}, 0);
-  document.getElementById('hExposure').textContent = ((totalExposure/state.bankroll)*100).toFixed(1) + '%';
-  document.getElementById('hExposure').style.color = totalExposure/state.bankroll > 0.2 ? '#ff4d4d' : '#ffd700';
-  document.getElementById('hTrades').textContent = state.trades.length;
-}
-
-// ═══════════════════════════════════════════════════════
 // TABS
 // ═══════════════════════════════════════════════════════
-
 function showTab(id) {
-  document.querySelectorAll('.tab-content').forEach(function(el){ el.classList.remove('active'); });
-  document.querySelectorAll('.tab').forEach(function(el){ el.classList.remove('active'); });
-  document.getElementById('tab-' + id).classList.add('active');
+  var contents = document.querySelectorAll('.tab-content');
+  for (var i = 0; i < contents.length; i++) contents[i].classList.remove('active');
   var tabs = document.querySelectorAll('.tab');
-  var map = {scanner:0, signal:1, trades:2, kelly:3, watchlist:4, guide:5};
-  if (map[id] !== undefined) tabs[map[id]].classList.add('active');
+  for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove('active');
+  document.getElementById('tab-' + id).classList.add('active');
+  for (var k = 0; k < tabs.length; k++) {
+    if (tabs[k].dataset.tab === id) tabs[k].classList.add('active');
+  }
 }
 
 // ═══════════════════════════════════════════════════════
-// INIT
+// EVENT LISTENERS
 // ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  // Tabs
+  var tabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener('click', function() { showTab(this.dataset.tab); });
+  }
+  // Buttons
+  document.getElementById('scanBtn').addEventListener('click', runScan);
+  document.getElementById('analyseBtn').addEventListener('click', analyseSignal);
+  document.getElementById('addTickerBtn').addEventListener('click', addTicker);
+  // Filters
+  document.getElementById('searchInput').addEventListener('input', renderScanTable);
+  document.getElementById('sectorFilter').addEventListener('change', renderScanTable);
+  document.getElementById('signalFilter').addEventListener('change', renderScanTable);
+  // Sliders
+  document.getElementById('bankrollSlider').addEventListener('input', function() { updateBankroll(this.value); });
+  document.getElementById('alphaSlider').addEventListener('input', function() { updateAlpha(this.value); });
+  document.getElementById('maxExpSlider').addEventListener('input', function() { updateMaxExp(this.value); });
+  document.getElementById('kellyP').addEventListener('input', calcKellyLive);
+  document.getElementById('kellyB').addEventListener('input', calcKellyLive);
 
-renderScanTable();
-renderWatchlist();
-renderGuide();
-updateHeaderStats();
+  // Initial render
+  renderScanTable();
+  renderWatchlist();
+  updateLiveBanner();
+
+  // Test API on load
+  fetchLivePrice('NVDA').then(function(p) {
+    if (p) {
+      var banner = document.getElementById('liveBanner');
+      banner.className = 'live-banner';
+      banner.textContent = 'LIVE DATA READY - API connected';
+    } else {
+      var banner = document.getElementById('liveBanner');
+      banner.className = 'live-banner offline';
+      banner.textContent = 'API OFFLINE - Add API_KEY to Vercel env vars';
+    }
+  });
+});
 </script>
 
 </body>
