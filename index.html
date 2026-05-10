@@ -192,101 +192,113 @@ input[type=range] { accent-color: #00ff88; width: 100%; }
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
+// 
 // WATCHLIST DATA
-// ═══════════════════════════════════════════════════════
 var WATCHLIST = [
-  {t:'NVDA',n:'Nvidia',s:'AI Chips',c:'May 20',pM:0.61,bp:209},
-  {t:'AMD',n:'AMD',s:'AI Chips',c:'--',pM:0.58,bp:412},
-  {t:'AVGO',n:'Broadcom',s:'AI Chips',c:'Jun 5',pM:0.52,bp:1850},
-  {t:'TSM',n:'Taiwan Semi',s:'AI Chips',c:'Jul 17',pM:0.59,bp:215},
-  {t:'ASML',n:'ASML',s:'AI Chips',c:'Jul 16',pM:0.55,bp:920},
-  {t:'AMAT',n:'Applied Materials',s:'AI Chips',c:'May 14',pM:0.52,bp:198},
-  {t:'MRVL',n:'Marvell',s:'AI Chips',c:'May 29',pM:0.48,bp:78},
-  {t:'ARM',n:'ARM',s:'AI Chips',c:'Aug',pM:0.41,bp:217},
-  {t:'QCOM',n:'Qualcomm',s:'AI Chips',c:'Jul 30',pM:0.54,bp:175},
-  {t:'INTC',n:'Intel',s:'AI Chips',c:'Jul 24',pM:0.38,bp:22},
-  {t:'LRCX',n:'Lam Research',s:'AI Chips',c:'Jul 23',pM:0.51,bp:780},
-  {t:'KLAC',n:'KLA Corp',s:'AI Chips',c:'Jul 24',pM:0.53,bp:780},
-  {t:'ONTO',n:'Onto Innovation',s:'AI Chips',c:'Aug 6',pM:0.49,bp:293},
-  {t:'TXN',n:'Texas Instruments',s:'AI Chips',c:'Apr 22',pM:0.50,bp:175},
-  {t:'ADI',n:'Analog Devices',s:'AI Chips',c:'May 21',pM:0.51,bp:185},
-  {t:'MU',n:'Micron',s:'Memory',c:'Jul 1',pM:0.67,bp:757},
-  {t:'SNDK',n:'SanDisk',s:'Memory',c:'Aug',pM:0.52,bp:1388},
-  {t:'WDC',n:'Western Digital',s:'Memory',c:'Jul 30',pM:0.48,bp:52},
-  {t:'STX',n:'Seagate',s:'Memory',c:'Jul 22',pM:0.45,bp:105},
-  {t:'MSFT',n:'Microsoft',s:'Big Tech',c:'Jul 28',pM:0.63,bp:415},
-  {t:'GOOGL',n:'Alphabet',s:'Big Tech',c:'Jul 22',pM:0.58,bp:195},
-  {t:'META',n:'Meta',s:'Big Tech',c:'Jul 30',pM:0.60,bp:720},
-  {t:'AMZN',n:'Amazon',s:'Big Tech',c:'Jul 31',pM:0.56,bp:234},
-  {t:'AAPL',n:'Apple',s:'Big Tech',c:'Jul 31',pM:0.51,bp:232},
-  {t:'BABA',n:'Alibaba',s:'Big Tech',c:'May 13',pM:0.55,bp:142},
-  {t:'NFLX',n:'Netflix',s:'Big Tech',c:'Apr 15',pM:0.57,bp:1180},
-  {t:'CRWV',n:'CoreWeave',s:'AI Cloud',c:'Aug',pM:0.42,bp:132},
-  {t:'SMCI',n:'Super Micro',s:'AI Cloud',c:'Aug 6',pM:0.39,bp:34},
-  {t:'DELL',n:'Dell',s:'AI Cloud',c:'May 29',pM:0.51,bp:148},
-  {t:'BE',n:'Bloom Energy',s:'AI Power',c:'Jul 31',pM:0.47,bp:285},
-  {t:'VRT',n:'Vertiv',s:'AI Power',c:'Jul 23',pM:0.51,bp:340},
-  {t:'CEG',n:'Constellation Energy',s:'AI Power',c:'May 11',pM:0.54,bp:358},
-  {t:'OKLO',n:'Oklo Nuclear',s:'AI Power',c:'May 12',pM:0.36,bp:92},
-  {t:'VST',n:'Vistra Energy',s:'AI Power',c:'May 7',pM:0.52,bp:165},
-  {t:'GEV',n:'GE Vernova',s:'AI Power',c:'Apr 23',pM:0.55,bp:380},
-  {t:'PLTR',n:'Palantir',s:'AI Software',c:'Aug 5',pM:0.48,bp:165},
-  {t:'AI',n:'C3.ai',s:'AI Software',c:'Jun 4',pM:0.32,bp:28},
-  {t:'BBAI',n:'BigBear.ai',s:'AI Software',c:'May 12',pM:0.28,bp:3},
-  {t:'SOUN',n:'SoundHound',s:'AI Software',c:'May 8',pM:0.35,bp:18},
-  {t:'APP',n:'Applovin',s:'AI Software',c:'May 7',pM:0.55,bp:380},
-  {t:'TTD',n:'Trade Desk',s:'AI Software',c:'May 7',pM:0.49,bp:88},
-  {t:'CRM',n:'Salesforce',s:'Cloud SaaS',c:'May 28',pM:0.55,bp:298},
-  {t:'NOW',n:'ServiceNow',s:'Cloud SaaS',c:'Apr 23',pM:0.57,bp:1080},
-  {t:'SNOW',n:'Snowflake',s:'Cloud SaaS',c:'May 21',pM:0.46,bp:178},
-  {t:'DDOG',n:'Datadog',s:'Cloud SaaS',c:'Aug 7',pM:0.55,bp:184},
-  {t:'NET',n:'Cloudflare',s:'Cloud SaaS',c:'Aug 7',pM:0.43,bp:178},
-  {t:'ADBE',n:'Adobe',s:'Cloud SaaS',c:'Jun 11',pM:0.52,bp:388},
-  {t:'PANW',n:'Palo Alto',s:'Cybersec',c:'May 20',pM:0.53,bp:195},
-  {t:'CRWD',n:'CrowdStrike',s:'Cybersec',c:'Jun 4',pM:0.49,bp:478},
-  {t:'FTNT',n:'Fortinet',s:'Cybersec',c:'Aug 6',pM:0.52,bp:105},
-  {t:'CSCO',n:'Cisco',s:'Cybersec',c:'May 13',pM:0.48,bp:64},
-  {t:'HIMS',n:'Hims and Hers',s:'Growth',c:'May 11',pM:0.44,bp:29},
-  {t:'ONON',n:'On Holding',s:'Growth',c:'May 12',pM:0.46,bp:35},
-  {t:'CELH',n:'Celsius',s:'Growth',c:'May 6',pM:0.42,bp:28},
-  {t:'DUOL',n:'Duolingo',s:'Growth',c:'May 7',pM:0.54,bp:380},
-  {t:'CAVA',n:'CAVA Group',s:'Growth',c:'May 21',pM:0.51,bp:118},
-  {t:'UBER',n:'Uber',s:'Growth',c:'May 7',pM:0.55,bp:88},
-  {t:'ABNB',n:'Airbnb',s:'Growth',c:'May 8',pM:0.52,bp:148},
-  {t:'RDDT',n:'Reddit',s:'Growth',c:'May 1',pM:0.46,bp:148},
-  {t:'LLY',n:'Eli Lilly',s:'Biotech',c:'Aug 6',pM:0.60,bp:978},
-  {t:'NVO',n:'Novo Nordisk',s:'Biotech',c:'Aug 6',pM:0.58,bp:68},
-  {t:'REGN',n:'Regeneron',s:'Biotech',c:'May 7',pM:0.55,bp:698},
-  {t:'VRTX',n:'Vertex Pharma',s:'Biotech',c:'Apr 28',pM:0.54,bp:518},
-  {t:'CELC',n:'Celcuity',s:'Biotech',c:'Jul',pM:0.41,bp:28},
-  {t:'QBTS',n:'D-Wave Quantum',s:'Quantum',c:'May 12',pM:0.34,bp:24},
-  {t:'IONQ',n:'IonQ',s:'Quantum',c:'May 8',pM:0.30,bp:32},
-  {t:'RGTI',n:'Rigetti',s:'Quantum',c:'May 12',pM:0.28,bp:12},
-  {t:'COIN',n:'Coinbase',s:'Fintech',c:'May 8',pM:0.47,bp:248},
-  {t:'HOOD',n:'Robinhood',s:'Fintech',c:'May 8',pM:0.43,bp:28},
-  {t:'SOFI',n:'SoFi',s:'Fintech',c:'May 1',pM:0.39,bp:12},
-  {t:'PYPL',n:'PayPal',s:'Fintech',c:'Apr 29',pM:0.50,bp:68},
-  {t:'TSLA',n:'Tesla',s:'EV',c:'Jul 23',pM:0.50,bp:298},
-  {t:'RIVN',n:'Rivian',s:'EV',c:'May 6',pM:0.35,bp:12},
-  {t:'RR',n:'Rolls-Royce',s:'UK FTSE',c:'Jul 30',pM:0.58,bp:1198},
-  {t:'AZN',n:'AstraZeneca',s:'UK FTSE',c:'May 12',pM:0.55,bp:78},
-  {t:'SHEL',n:'Shell',s:'UK FTSE',c:'May 2',pM:0.48,bp:28},
-  {t:'GSK',n:'GSK',s:'UK FTSE',c:'Jul 30',pM:0.51,bp:18},
-  {t:'BP',n:'BP',s:'UK FTSE',c:'Aug 5',pM:0.42,bp:4},
-  {t:'HSBA',n:'HSBC',s:'UK FTSE',c:'May 6',pM:0.52,bp:9},
-  {t:'BARC',n:'Barclays',s:'UK FTSE',c:'May 1',pM:0.50,bp:3},
-  {t:'LLOY',n:'Lloyds',s:'UK FTSE',c:'Apr 30',pM:0.47,bp:1},
-  {t:'VOD',n:'Vodafone',s:'UK FTSE',c:'May 13',pM:0.40,bp:1},
-  {t:'NG',n:'National Grid',s:'UK FTSE',c:'May 22',pM:0.50,bp:11},
-  {t:'BA',n:'BAE Systems',s:'UK FTSE',c:'May 1',pM:0.56,bp:14},
-  {t:'CWR',n:'Ceres Power',s:'UK AIM',c:'Jun',pM:0.33,bp:1},
-  {t:'AFC',n:'AFC Energy',s:'UK AIM',c:'Jun',pM:0.28,bp:0.5},
-  {t:'ITM',n:'ITM Power',s:'UK AIM',c:'Jun',pM:0.30,bp:0.6},
-  {t:'FTC',n:'Filtronic',s:'UK AIM',c:'Q3',pM:0.38,bp:3},
-  {t:'PHE',n:'Powerhouse Energy',s:'UK AIM',c:'Q3',pM:0.25,bp:0.4},
-  {t:'AAOI',n:'Applied Optoelec',s:'Speculative',c:'--',pM:0.35,bp:146},
-  {t:'MSTR',n:'MicroStrategy',s:'Speculative',c:'Apr 29',pM:0.44,bp:398}
+  // AI CHIPS
+  {t:'NVDA',n:'Nvidia',s:'AI Chips',c:'May 20',pM:0.61,bp:209.80},
+  {t:'AMD',n:'AMD',s:'AI Chips',c:'--',pM:0.58,bp:115.20},
+  {t:'AVGO',n:'Broadcom',s:'AI Chips',c:'Jun 5',pM:0.52,bp:248.50},
+  {t:'TSM',n:'Taiwan Semi',s:'AI Chips',c:'Jul 17',pM:0.59,bp:195.40},
+  {t:'ASML',n:'ASML',s:'AI Chips',c:'Jul 16',pM:0.55,bp:748.20},
+  {t:'AMAT',n:'Applied Materials',s:'AI Chips',c:'May 14',pM:0.52,bp:195.30},
+  {t:'MRVL',n:'Marvell',s:'AI Chips',c:'May 29',pM:0.48,bp:74.20},
+  {t:'ARM',n:'ARM',s:'AI Chips',c:'Aug',pM:0.41,bp:139.80},
+  {t:'QCOM',n:'Qualcomm',s:'AI Chips',c:'Jul 30',pM:0.54,bp:165.40},
+  {t:'INTC',n:'Intel',s:'AI Chips',c:'Jul 24',pM:0.38,bp:20.80},
+  {t:'LRCX',n:'Lam Research',s:'AI Chips',c:'Jul 23',pM:0.51,bp:84.20},
+  {t:'KLAC',n:'KLA Corp',s:'AI Chips',c:'Jul 24',pM:0.53,bp:89.40},
+  {t:'ONTO',n:'Onto Innovation',s:'AI Chips',c:'Aug 6',pM:0.49,bp:292.80},
+  {t:'TXN',n:'Texas Instruments',s:'AI Chips',c:'Apr 22',pM:0.50,bp:186.20},
+  {t:'ADI',n:'Analog Devices',s:'AI Chips',c:'May 21',pM:0.51,bp:224.80},
+  // MEMORY
+  {t:'MU',n:'Micron',s:'Memory',c:'Jul 1',pM:0.67,bp:108.80},
+  {t:'SNDK',n:'SanDisk',s:'Memory',c:'Aug',pM:0.52,bp:72.40},
+  {t:'WDC',n:'Western Digital',s:'Memory',c:'Jul 30',pM:0.48,bp:44.20},
+  {t:'STX',n:'Seagate',s:'Memory',c:'Jul 22',pM:0.45,bp:98.60},
+  // BIG TECH
+  {t:'MSFT',n:'Microsoft',s:'Big Tech',c:'Jul 28',pM:0.63,bp:432.60},
+  {t:'GOOGL',n:'Alphabet',s:'Big Tech',c:'Jul 22',pM:0.58,bp:167.80},
+  {t:'META',n:'Meta',s:'Big Tech',c:'Jul 30',pM:0.60,bp:618.40},
+  {t:'AMZN',n:'Amazon',s:'Big Tech',c:'Jul 31',pM:0.56,bp:207.60},
+  {t:'AAPL',n:'Apple',s:'Big Tech',c:'Jul 31',pM:0.51,bp:210.80},
+  {t:'BABA',n:'Alibaba',s:'Big Tech',c:'May 13',pM:0.55,bp:124.60},
+  {t:'NFLX',n:'Netflix',s:'Big Tech',c:'Apr 15',pM:0.57,bp:1148.20},
+  // AI CLOUD
+  {t:'CRWV',n:'CoreWeave',s:'AI Cloud',c:'Aug',pM:0.42,bp:132.00},
+  {t:'SMCI',n:'Super Micro',s:'AI Cloud',c:'Aug 6',pM:0.39,bp:35.20},
+  {t:'DELL',n:'Dell',s:'AI Cloud',c:'May 29',pM:0.51,bp:118.40},
+  // AI POWER
+  {t:'BE',n:'Bloom Energy',s:'AI Power',c:'Jul 31',pM:0.47,bp:31.40},
+  {t:'VRT',n:'Vertiv',s:'AI Power',c:'Jul 23',pM:0.51,bp:118.20},
+  {t:'CEG',n:'Constellation Energy',s:'AI Power',c:'May 11',pM:0.54,bp:334.60},
+  {t:'OKLO',n:'Oklo Nuclear',s:'AI Power',c:'May 12',pM:0.36,bp:46.80},
+  {t:'VST',n:'Vistra Energy',s:'AI Power',c:'May 7',pM:0.52,bp:168.40},
+  {t:'GEV',n:'GE Vernova',s:'AI Power',c:'Apr 23',pM:0.55,bp:432.80},
+  // AI SOFTWARE
+  {t:'PLTR',n:'Palantir',s:'AI Software',c:'Aug 5',pM:0.48,bp:124.80},
+  {t:'AI',n:'C3.ai',s:'AI Software',c:'Jun 4',pM:0.32,bp:28.40},
+  {t:'BBAI',n:'BigBear.ai',s:'AI Software',c:'May 12',pM:0.28,bp:3.20},
+  {t:'SOUN',n:'SoundHound',s:'AI Software',c:'May 8',pM:0.35,bp:14.80},
+  {t:'APP',n:'Applovin',s:'AI Software',c:'May 7',pM:0.55,bp:378.60},
+  {t:'TTD',n:'Trade Desk',s:'AI Software',c:'May 7',pM:0.49,bp:82.40},
+  // CLOUD SAAS
+  {t:'CRM',n:'Salesforce',s:'Cloud SaaS',c:'May 28',pM:0.55,bp:288.40},
+  {t:'NOW',n:'ServiceNow',s:'Cloud SaaS',c:'Apr 23',pM:0.57,bp:1042.60},
+  {t:'SNOW',n:'Snowflake',s:'Cloud SaaS',c:'May 21',pM:0.46,bp:184.20},
+  {t:'DDOG',n:'Datadog',s:'Cloud SaaS',c:'Aug 7',pM:0.55,bp:148.40},
+  {t:'NET',n:'Cloudflare',s:'Cloud SaaS',c:'Aug 7',pM:0.43,bp:132.80},
+  {t:'ADBE',n:'Adobe',s:'Cloud SaaS',c:'Jun 11',pM:0.52,bp:382.40},
+  // CYBERSEC
+  {t:'PANW',n:'Palo Alto',s:'Cybersec',c:'May 20',pM:0.53,bp:192.80},
+  {t:'CRWD',n:'CrowdStrike',s:'Cybersec',c:'Jun 4',pM:0.49,bp:426.40},
+  {t:'FTNT',n:'Fortinet',s:'Cybersec',c:'Aug 6',pM:0.52,bp:112.60},
+  {t:'CSCO',n:'Cisco',s:'Cybersec',c:'May 13',pM:0.48,bp:62.40},
+  // GROWTH
+  {t:'HIMS',n:'Hims and Hers',s:'Growth',c:'May 11',pM:0.44,bp:28.60},
+  {t:'ONON',n:'On Holding',s:'Growth',c:'May 12',pM:0.46,bp:54.80},
+  {t:'CELH',n:'Celsius',s:'Growth',c:'May 6',pM:0.42,bp:29.40},
+  {t:'DUOL',n:'Duolingo',s:'Growth',c:'May 7',pM:0.54,bp:424.60},
+  {t:'CAVA',n:'CAVA Group',s:'Growth',c:'May 21',pM:0.51,bp:102.40},
+  {t:'UBER',n:'Uber',s:'Growth',c:'May 7',pM:0.55,bp:84.20},
+  {t:'ABNB',n:'Airbnb',s:'Growth',c:'May 8',pM:0.52,bp:142.60},
+  {t:'RDDT',n:'Reddit',s:'Growth',c:'May 1',pM:0.46,bp:144.80},
+  // BIOTECH
+  {t:'LLY',n:'Eli Lilly',s:'Biotech',c:'Aug 6',pM:0.60,bp:812.40},
+  {t:'NVO',n:'Novo Nordisk',s:'Biotech',c:'Aug 6',pM:0.58,bp:72.60},
+  {t:'REGN',n:'Regeneron',s:'Biotech',c:'May 7',pM:0.55,bp:688.40},
+  {t:'VRTX',n:'Vertex Pharma',s:'Biotech',c:'Apr 28',pM:0.54,bp:427.48},
+  {t:'CELC',n:'Celcuity',s:'Biotech',c:'Jul',pM:0.41,bp:24.60},
+  // QUANTUM
+  {t:'QBTS',n:'D-Wave Quantum',s:'Quantum',c:'May 12',pM:0.34,bp:10.20},
+  {t:'IONQ',n:'IonQ',s:'Quantum',c:'May 8',pM:0.30,bp:38.40},
+  {t:'RGTI',n:'Rigetti',s:'Quantum',c:'May 12',pM:0.28,bp:10.80},
+  // FINTECH
+  {t:'COIN',n:'Coinbase',s:'Fintech',c:'May 8',pM:0.47,bp:204.80},
+  {t:'HOOD',n:'Robinhood',s:'Fintech',c:'May 8',pM:0.43,bp:48.40},
+  {t:'SOFI',n:'SoFi',s:'Fintech',c:'May 1',pM:0.39,bp:14.20},
+  {t:'PYPL',n:'PayPal',s:'Fintech',c:'Apr 29',pM:0.50,bp:68.40},
+  // EV
+  {t:'TSLA',n:'Tesla',s:'EV',c:'Jul 23',pM:0.50,bp:284.60},
+  {t:'RIVN',n:'Rivian',s:'EV',c:'May 6',pM:0.35,bp:13.40},
+  // UK FTSE
+  {t:'RR.L',n:'Rolls-Royce',s:'UK FTSE',c:'Jul 30',pM:0.58,bp:1198},
+  {t:'AZN.L',n:'AstraZeneca',s:'UK FTSE',c:'May 12',pM:0.55,bp:12420},
+  {t:'SHEL.L',n:'Shell',s:'UK FTSE',c:'May 2',pM:0.48,bp:2642},
+  {t:'GSK.L',n:'GSK',s:'UK FTSE',c:'Jul 30',pM:0.51,bp:1642},
+  {t:'BP.L',n:'BP',s:'UK FTSE',c:'Aug 5',pM:0.42,bp:398},
+  {t:'HSBA.L',n:'HSBC',s:'UK FTSE',c:'May 6',pM:0.52,bp:842},
+  {t:'BARC.L',n:'Barclays',s:'UK FTSE',c:'May 1',pM:0.50,bp:298},
+  {t:'BA.L',n:'BAE Systems',s:'UK FTSE',c:'May 1',pM:0.56,bp:1498},
+  // UK AIM
+  {t:'CWR.L',n:'Ceres Power',s:'UK AIM',c:'Jun',pM:0.33,bp:82},
+  {t:'AFC.L',n:'AFC Energy',s:'UK AIM',c:'Jun',pM:0.28,bp:12},
+  {t:'ITM.L',n:'ITM Power',s:'UK AIM',c:'Jun',pM:0.30,bp:44},
+  {t:'FTC.L',n:'Filtronic',s:'UK AIM',c:'Q3',pM:0.38,bp:342},
+  {t:'PHE.L',n:'Powerhouse Energy',s:'UK AIM',c:'Q3',pM:0.25,bp:0.4},
+  // SPECULATIVE
+  {t:'AAOI',n:'Applied Optoelec',s:'Speculative',c:'--',pM:0.35,bp:146.40},
+  {t:'MSTR',n:'MicroStrategy',s:'Speculative',c:'Apr 29',pM:0.44,bp:398.20}
 ];
 
 // State
@@ -301,9 +313,9 @@ var state = {
   scanning: false
 };
 
-// ═══════════════════════════════════════════════════════
+// 
 // FORMULAS
-// ═══════════════════════════════════════════════════════
+// 
 function calcEdge(pM, pMkt) { return pM - pMkt; }
 function calcKelly(p, b) { return Math.max(0, (p * b - (1-p)) / b); }
 function calcPositionSize(p) {
@@ -334,34 +346,49 @@ function genModelProb(pMkt) {
   return Math.min(0.95, Math.max(0.05, pMkt + (Math.random() - 0.45) * 0.18));
 }
 
-// ═══════════════════════════════════════════════════════
+// 
 // LIVE PRICE FETCHING
-// ═══════════════════════════════════════════════════════
+// 
 function fetchLivePrice(ticker) {
   return new Promise(function(resolve) {
-    // Yahoo Finance - free, no API key, works from browser
-    var yahooUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/' + ticker + '?interval=1d&range=1d';
-    var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(yahooUrl);
-
-    fetch(proxyUrl)
-      .then(function(r) { return r.ok ? r.json() : null; })
-      .then(function(wrapper) {
-        if (!wrapper || !wrapper.contents) { resolve(null); return; }
-        try {
-          var data = JSON.parse(wrapper.contents);
-          var result = data.chart && data.chart.result && data.chart.result[0];
-          if (!result) { resolve(null); return; }
-          var meta = result.meta;
-          var price = meta.regularMarketPrice || meta.previousClose || null;
-          if (price) {
-            state.livePrices[ticker] = { price: price, time: Date.now() };
-          }
+    // Yahoo Finance direct API - no proxy needed for most browsers
+    var url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + ticker + '?interval=1d&range=1d';
+    fetch(url, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      mode: 'cors'
+    })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(data) {
+      try {
+        var result = data.chart.result[0];
+        var price = result.meta.regularMarketPrice || result.meta.previousClose;
+        if (price && price > 0) {
+          state.livePrices[ticker] = { price: price, time: Date.now() };
           resolve(price);
-        } catch(e) {
+        } else {
           resolve(null);
         }
+      } catch(e) {
+        resolve(null);
+      }
+    })
+    .catch(function() {
+      // Try backup Yahoo endpoint
+      var url2 = 'https://query2.finance.yahoo.com/v8/finance/chart/' + ticker + '?interval=1d&range=1d';
+      fetch(url2, { mode: 'cors' })
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        try {
+          var price = data.chart.result[0].meta.regularMarketPrice;
+          if (price && price > 0) {
+            state.livePrices[ticker] = { price: price, time: Date.now() };
+            resolve(price);
+          } else { resolve(null); }
+        } catch(e) { resolve(null); }
       })
       .catch(function() { resolve(null); });
+    });
   });
 }
 
@@ -383,9 +410,9 @@ function isLive(ticker) {
   return state.livePrices[ticker] && (Date.now() - state.livePrices[ticker].time < 120000);
 }
 
-// ═══════════════════════════════════════════════════════
+// 
 // SIGNAL LOGIC
-// ═══════════════════════════════════════════════════════
+// 
 function getSignalData(w) {
   var basePrice = getPrice(w.t);
   var prices = genPrices(basePrice, 60);
@@ -411,9 +438,9 @@ function getSignalData(w) {
   };
 }
 
-// ═══════════════════════════════════════════════════════
+// 
 // LIVE BANNER
-// ═══════════════════════════════════════════════════════
+// 
 function updateLiveBanner() {
   var banner = document.getElementById('liveBanner');
   var liveCount = Object.keys(state.livePrices).length;
@@ -427,9 +454,9 @@ function updateLiveBanner() {
   }
 }
 
-// ═══════════════════════════════════════════════════════
+// 
 // SCANNER
-// ═══════════════════════════════════════════════════════
+// 
 function appendLog(text, color) {
   var log = document.getElementById('scanLog');
   if (log.firstChild && log.firstChild.textContent === 'Awaiting scan...') log.innerHTML = '';
@@ -528,9 +555,9 @@ function renderScanTable() {
   });
 }
 
-// ═══════════════════════════════════════════════════════
+// 
 // SIGNAL ANALYSIS
-// ═══════════════════════════════════════════════════════
+// 
 function analyseSignal() {
   var ticker = document.getElementById('tickerInput').value.toUpperCase().trim();
   if (!ticker) return;
@@ -588,9 +615,9 @@ function metricBox(lbl, val, sub, color) {
   return '<div class="metric"><div class="lbl">'+lbl+'</div><div class="val" style="color:'+color+'">'+val+'</div><div class="sub">'+sub+'</div></div>';
 }
 
-// ═══════════════════════════════════════════════════════
+// 
 // TRADES
-// ═══════════════════════════════════════════════════════
+// 
 function executeTrade(ticker, size, sl, tp, edge) {
   state.trades.unshift({
     ticker: ticker, size: size, sl: sl, tp: tp, edge: edge,
@@ -620,9 +647,9 @@ function renderTrades() {
   el.innerHTML = html;
 }
 
-// ═══════════════════════════════════════════════════════
+// 
 // KELLY
-// ═══════════════════════════════════════════════════════
+// 
 function updateBankroll(val) {
   state.bankroll = parseInt(val);
   document.getElementById('bankrollLabel').textContent = 'Bankroll: £' + parseInt(val).toLocaleString();
@@ -656,9 +683,9 @@ function calcKellyLive() {
     '</div>';
 }
 
-// ═══════════════════════════════════════════════════════
+// 
 // WATCHLIST
-// ═══════════════════════════════════════════════════════
+// 
 function renderWatchlist() {
   var el = document.getElementById('watchlistContent');
   var html = '';
@@ -688,9 +715,9 @@ function addTicker() {
   renderWatchlist();
 }
 
-// ═══════════════════════════════════════════════════════
+// 
 // TABS
-// ═══════════════════════════════════════════════════════
+// 
 function showTab(id) {
   var contents = document.querySelectorAll('.tab-content');
   for (var i = 0; i < contents.length; i++) contents[i].classList.remove('active');
@@ -702,9 +729,9 @@ function showTab(id) {
   }
 }
 
-// ═══════════════════════════════════════════════════════
+// 
 // EVENT LISTENERS
-// ═══════════════════════════════════════════════════════
+// 
 document.addEventListener('DOMContentLoaded', function() {
   // Tabs
   var tabs = document.querySelectorAll('.tab');
