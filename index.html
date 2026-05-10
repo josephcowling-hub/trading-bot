@@ -71,7 +71,7 @@ input[type=range] { accent-color: #00ff88; width: 100%; }
   </div>
 </div>
 
-<div class="live-banner" id="liveBanner">CHECKING LIVE DATA CONNECTION...</div>
+<div class="live-banner offline" id="liveBanner">TAP RUN SCAN TO FETCH LIVE PRICES</div>
 
 <div class="tabs">
   <button class="tab active" data-tab="scanner">SCANNER</button>
@@ -730,19 +730,7 @@ document.addEventListener('DOMContentLoaded', function() {
   renderScanTable();
   renderWatchlist();
   updateLiveBanner();
-
-  // Test API on load
-  fetchLivePrice('NVDA').then(function(p) {
-    if (p) {
-      var banner = document.getElementById('liveBanner');
-      banner.className = 'live-banner';
-      banner.textContent = 'LIVE DATA READY - API connected';
-    } else {
-      var banner = document.getElementById('liveBanner');
-      banner.className = 'live-banner offline';
-      banner.textContent = 'API OFFLINE - Add API_KEY to Vercel env vars';
-    }
-  });
+  // Don't auto-fetch on load - wait for user to tap Analyse or Run Scan
 });
 </script>
 
